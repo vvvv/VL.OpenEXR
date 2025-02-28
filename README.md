@@ -14,7 +14,7 @@ For use with vvvv, the visual live-programming environment for .NET: http://vvvv
 ## Getting started
 - Install as [described here](https://thegraybook.vvvv.org/reference/hde/managing-nugets.html) via commandline:
 
-    `nuget install VL.OpenEXR -pre`
+    `nuget install VL.OpenEXR`
 
 - Usage examples and more information are included in the pack and can be found via the [Help Browser](https://thegraybook.vvvv.org/reference/hde/findinghelp.html)
 
