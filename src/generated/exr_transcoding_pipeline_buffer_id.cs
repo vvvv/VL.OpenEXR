@@ -1,0 +1,13 @@
+namespace OpenEXR.Interop
+{
+    public enum exr_transcoding_pipeline_buffer_id
+    {
+        EXR_TRANSCODE_BUFFER_PACKED,
+        EXR_TRANSCODE_BUFFER_UNPACKED,
+        EXR_TRANSCODE_BUFFER_COMPRESSED,
+        EXR_TRANSCODE_BUFFER_SCRATCH1,
+        EXR_TRANSCODE_BUFFER_SCRATCH2,
+        EXR_TRANSCODE_BUFFER_PACKED_SAMPLES,
+        EXR_TRANSCODE_BUFFER_SAMPLES,
+    }
+}

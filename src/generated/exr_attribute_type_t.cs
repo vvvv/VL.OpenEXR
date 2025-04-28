@@ -1,0 +1,38 @@
+namespace OpenEXR.Interop
+{
+    public enum exr_attribute_type_t
+    {
+        EXR_ATTR_UNKNOWN = 0,
+        EXR_ATTR_BOX2I,
+        EXR_ATTR_BOX2F,
+        EXR_ATTR_CHLIST,
+        EXR_ATTR_CHROMATICITIES,
+        EXR_ATTR_COMPRESSION,
+        EXR_ATTR_DOUBLE,
+        EXR_ATTR_ENVMAP,
+        EXR_ATTR_FLOAT,
+        EXR_ATTR_FLOAT_VECTOR,
+        EXR_ATTR_INT,
+        EXR_ATTR_KEYCODE,
+        EXR_ATTR_LINEORDER,
+        EXR_ATTR_M33F,
+        EXR_ATTR_M33D,
+        EXR_ATTR_M44F,
+        EXR_ATTR_M44D,
+        EXR_ATTR_PREVIEW,
+        EXR_ATTR_RATIONAL,
+        EXR_ATTR_STRING,
+        EXR_ATTR_STRING_VECTOR,
+        EXR_ATTR_TILEDESC,
+        EXR_ATTR_TIMECODE,
+        EXR_ATTR_V2I,
+        EXR_ATTR_V2F,
+        EXR_ATTR_V2D,
+        EXR_ATTR_V3I,
+        EXR_ATTR_V3F,
+        EXR_ATTR_V3D,
+        EXR_ATTR_DEEP_IMAGE_STATE,
+        EXR_ATTR_OPAQUE,
+        EXR_ATTR_LAST_KNOWN_TYPE,
+    }
+}
