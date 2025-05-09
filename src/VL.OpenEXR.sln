@@ -5,6 +5,8 @@ VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VL.OpenEXR", "VL.OpenEXR.csproj", "{FDC6242A-4830-412E-8A76-BF776C864EF9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VL.OpenEXR.Tests", "..\tests\VL.OpenEXR.Tests.csproj", "{4C17CC39-E541-45A2-8805-E3BECFF11E05}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{FDC6242A-4830-412E-8A76-BF776C864EF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FDC6242A-4830-412E-8A76-BF776C864EF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FDC6242A-4830-412E-8A76-BF776C864EF9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C17CC39-E541-45A2-8805-E3BECFF11E05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C17CC39-E541-45A2-8805-E3BECFF11E05}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C17CC39-E541-45A2-8805-E3BECFF11E05}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C17CC39-E541-45A2-8805-E3BECFF11E05}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

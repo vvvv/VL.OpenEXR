@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 
 namespace OpenEXR.Interop
 {
-    public unsafe partial struct _exr_encode_pipeline
+    public unsafe partial struct exr_encode_pipeline_t
     {
         [NativeTypeName("size_t")]
         public nuint pipe_size;
@@ -18,7 +18,7 @@ namespace OpenEXR.Interop
         public int part_index;
 
         [NativeTypeName("exr_const_context_t")]
-        public _priv_exr_context_t* context;
+        public exr_context_t* context;
 
         public exr_chunk_info_t chunk;
 
@@ -65,22 +65,22 @@ namespace OpenEXR.Interop
         public nuint scratch_alloc_size_2;
 
         [NativeTypeName("void *(*)(exr_transcoding_pipeline_buffer_id_t, size_t)")]
-        public delegate* unmanaged[Cdecl]<exr_transcoding_pipeline_buffer_id, nuint, void*> alloc_fn;
+        public delegate* unmanaged[Cdecl]<exr_transcoding_pipeline_buffer_id_t, nuint, void*> alloc_fn;
 
         [NativeTypeName("void (*)(exr_transcoding_pipeline_buffer_id_t, void *)")]
-        public delegate* unmanaged[Cdecl]<exr_transcoding_pipeline_buffer_id, void*, void> free_fn;
+        public delegate* unmanaged[Cdecl]<exr_transcoding_pipeline_buffer_id_t, void*, void> free_fn;
 
         [NativeTypeName("exr_result_t (*)(struct _exr_encode_pipeline *)")]
-        public delegate* unmanaged[Cdecl]<_exr_encode_pipeline*, int> convert_and_pack_fn;
+        public delegate* unmanaged[Cdecl]<exr_encode_pipeline_t*, int> convert_and_pack_fn;
 
         [NativeTypeName("exr_result_t (*)(struct _exr_encode_pipeline *)")]
-        public delegate* unmanaged[Cdecl]<_exr_encode_pipeline*, int> compress_fn;
+        public delegate* unmanaged[Cdecl]<exr_encode_pipeline_t*, int> compress_fn;
 
         [NativeTypeName("exr_result_t (*)(struct _exr_encode_pipeline *)")]
-        public delegate* unmanaged[Cdecl]<_exr_encode_pipeline*, int> yield_until_ready_fn;
+        public delegate* unmanaged[Cdecl]<exr_encode_pipeline_t*, int> yield_until_ready_fn;
 
         [NativeTypeName("exr_result_t (*)(struct _exr_encode_pipeline *)")]
-        public delegate* unmanaged[Cdecl]<_exr_encode_pipeline*, int> write_fn;
+        public delegate* unmanaged[Cdecl]<exr_encode_pipeline_t*, int> write_fn;
 
         [NativeTypeName("exr_coding_channel_info_t[5]")]
         public __quick_chan_store_e__FixedBuffer _quick_chan_store;

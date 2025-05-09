@@ -22,3 +22,5 @@ VL*.dll
 
 # stride assembly
 Stride*.dll
+/tests/bin/
+/tests/obj

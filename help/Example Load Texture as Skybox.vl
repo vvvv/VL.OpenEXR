@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" xmlns:r="reflection" Id="Rcu3NDFVVYdL9QMaVXfuME" LanguageVersion="2024.6.6" Version="0.128">
+<Document xmlns:p="property" xmlns:r="reflection" Id="Rcu3NDFVVYdL9QMaVXfuME" LanguageVersion="2025.7.0-0328-g5bed1bf840" Version="0.128">
   <Patch Id="QcyBSDz9jgYPBJjrZl6tIT">
     <Canvas Id="Rh5YsOfHFh6OF2E4UspMnI" DefaultCategory="Main" BordersChecked="false" CanvasType="FullCategory" />
     <!--
@@ -23,6 +23,7 @@
             <Pin Id="ML8YvE0AjJSPFyKwUExW7y" Name="Path" Kind="InputPin" DefaultValue="..\resources\IndoorHDRI001_2K-HDR.exr" />
             <Pin Id="SWgMEBbp3dePvfqwHMvdLp" Name="Reload" Kind="InputPin" DefaultValue="False" />
             <Pin Id="AdhWUJ9jsMZNLHfnLJhtxp" Name="Texture" Kind="OutputPin" />
+            <Pin Id="Fp6SSIzPMYLLyYqVWqrNzq" Name="Use Open EXRCore" Kind="InputPin" />
           </Node>
           <Node Bounds="413,470,212,19" Id="L9PtcZwjCECP42RqaVaNL1">
             <p:NodeReference LastCategoryFullName="Stride.Lights" LastDependency="VL.Stride.Engine.vl">
@@ -43,6 +44,7 @@
             <Pin Id="EBQyK02sy78NFzbwBC5OkI" Name="Children" Kind="InputPin" />
             <Pin Id="LppgIFZsWq7Oq9cpAc2YZq" Name="Name" Kind="InputPin" />
             <Pin Id="Fh2s96lltm7QNFWDnD3KbY" Name="Enabled" Kind="InputPin" />
+            <Pin Id="MbksX1KynjAPzp7skhMAgJ" Name="Output" Kind="OutputPin" IsHidden="true" />
             <Pin Id="VH5tdRcfi7TOwjVyT6pUlr" Name="Entity" Kind="OutputPin" />
           </Node>
           <Node Bounds="369,541,63,19" Id="NV1DXweA0mqOxvuj68SVDz">
@@ -73,6 +75,7 @@
             <Pin Id="B17iSU1f2tuPdrtBu4g3Rg" Name="Children" Kind="InputPin" />
             <Pin Id="Jjfybo62C4BOjZgtHkIw1E" Name="Name" Kind="InputPin" />
             <Pin Id="IpekcZeRQYALEaf7y9yRwD" Name="Enabled" Kind="InputPin" />
+            <Pin Id="IQ9Bm6JeAYQPSPUjjhAtrA" Name="Output" Kind="OutputPin" IsHidden="true" />
             <Pin Id="Ozch59Y077ZQFrrgEhPqbg" Name="Entity" Kind="OutputPin" />
           </Node>
           <Node Bounds="349,578,225,19" Id="IeW25HXQQPcNuAPXPZVdrA">
@@ -87,6 +90,7 @@
             <Pin Id="SMa6x6qHJPdNZxWO4crqX6" Name="Save Bounds" Kind="InputPin" IsHidden="true" />
             <Pin Id="FwOGcxdcJyxO4hIVKYT5MR" Name="Back Buffer Format" Kind="InputPin" IsHidden="true" />
             <Pin Id="E5pxRiyFcaUQDVVVkIGhz2" Name="Depth Buffer Format" Kind="InputPin" IsHidden="true" />
+            <Pin Id="Eeb0kKlhkPLOMuvdwkGIUD" Name="Input Priority" Kind="InputPin" IsHidden="true" />
             <Pin Id="Sb5Bdmg4lGGLnCcXhSo51u" Name="Input" Kind="InputPin" />
             <Pin Id="GcpmNAUTER0NsRPYh0dIcS" Name="Camera" Kind="InputPin" />
             <Pin Id="I8upurvCGTWLcenuNcsnfr" Name="Enable Default Camera" Kind="InputPin" />
@@ -114,6 +118,7 @@
             <Pin Id="RJLk4kudrAiMpsDpEapPWL" Name="Bind Depth As Resource During Transparent Rendering" Kind="InputPin" IsHidden="true" />
             <Pin Id="JYoM1xo6IFjOYecDC9L4QK" Name="Back Buffer" Kind="OutputPin" IsHidden="true" />
             <Pin Id="ByqF8qoi1DHO2eaEMSePTa" Name="Depth Buffer" Kind="OutputPin" IsHidden="true" />
+            <Pin Id="NI8fumXrHkaPEfMk63n1w1" Name="Present Call Intercept" Kind="InputPin" IsHidden="true" />
           </Node>
           <Node Bounds="269,452,85,19" Id="VyxfmtSS0rXNjwfNC1Wof5">
             <p:NodeReference LastCategoryFullName="Stride.Materials" LastDependency="VL.Stride.Rendering.ShaderFX.vl">
@@ -126,6 +131,7 @@
             <Pin Id="UMbwUkRTSlQMIFpvfHyYV8" Name="Roughness" Kind="InputPin" DefaultValue="0.2" />
             <Pin Id="NMbt8CfyT7ZLrHVts5ykBp" Name="Transparency" Kind="InputPin" />
             <Pin Id="O7NtWmg8cvWOBM9UQrONin" Name="Cull Mode" Kind="InputPin" />
+            <Pin Id="RVeLoEpnR8oNlcpA6G9xGv" Name="State Output" Kind="OutputPin" IsHidden="true" />
             <Pin Id="GxrilvlnPbKM4LzGCsVtlI" Name="Output" Kind="OutputPin" />
           </Node>
           <Pad Id="IMhNuRY6vk8PERDo13zTKI" Comment="Path" Bounds="252,150,165,15" ShowValueBox="true" isIOBox="true" Value="..\resources\OutdoorHDRI016_2K-HDR.exr">
@@ -143,6 +149,7 @@
             <Pin Id="EzFLvelmvDuLEDCOHMYKf9" Name="Path" Kind="InputPin" DefaultValue="..\resources\Out_OutdoorHDRI016_2K-HDR.exr" />
             <Pin Id="QXLCmzRyXusMiaoh91L6e1" Name="Reload" Kind="InputPin" />
             <Pin Id="DWUt4jKnZzBLHH2KKHVil4" Name="Texture" Kind="OutputPin" />
+            <Pin Id="FQizDDJRNVRPajTbAYeyUO" Name="Use Open EXRCore" Kind="InputPin" />
           </Node>
           <Node Bounds="555,185,67,19" Id="O10pmsMEMUbOtaKs4UpEsi">
             <p:NodeReference LastCategoryFullName="OpenEXR" LastDependency="VL.OpenEXR.vl">
@@ -153,6 +160,7 @@
             <Pin Id="R04V8QllflnO1jhIQEqV7A" Name="Path" Kind="InputPin" DefaultValue="..\resources\IndoorHDRI001_2K-HDR.exr" />
             <Pin Id="P5osDG6DhJSM6U45MufzGK" Name="Reload" Kind="InputPin" DefaultValue="False" />
             <Pin Id="QlGL3uhiLwBMA1yPZ72ULe" Name="Texture" Kind="OutputPin" />
+            <Pin Id="RTLg258VROpPoERNRbRMWq" Name="Use Open EXRCore" Kind="InputPin" />
           </Node>
           <Pad Id="UXKMS2OHtl1OmGyA3m8J3Y" Comment="Path" Bounds="557,152,119,15" ShowValueBox="true" isIOBox="true" Value="..\resources\country_club_2k.hdr">
             <p:TypeAnnotation LastCategoryFullName="IO" LastDependency="CoreLibBasics.vl">
@@ -181,6 +189,22 @@
           </Pad>
           <Overlay Id="OL6j6XbKWnBNdYY2Z07FrZ" Name="Load EXR" Bounds="232,114,268,261" />
           <Overlay Id="UUkOWYDNuNhMcGPlX42nNm" Name="Load HDR" Bounds="529,115,275,263" />
+          <Pad Id="Bud5xRUpfZiOo6fxnYNT5f" Comment="Reload" Bounds="359,50,35,35" ShowValueBox="true" isIOBox="true" Value="True">
+            <p:TypeAnnotation LastCategoryFullName="Primitive" LastDependency="VL.CoreLib.vl">
+              <Choice Kind="ImmutableTypeFlag" Name="Boolean" />
+            </p:TypeAnnotation>
+            <p:ValueBoxSettings>
+              <p:buttonmode p:Assembly="VL.UI.Forms" p:Type="VL.HDE.PatchEditor.Editors.ButtonModeEnum">Toggle</p:buttonmode>
+            </p:ValueBoxSettings>
+          </Pad>
+          <Pad Id="URGmijtOT7rOuSsaQrd26o" Comment="Use Open EXRCore" Bounds="477,50,35,35" ShowValueBox="true" isIOBox="true" Value="False">
+            <p:TypeAnnotation LastCategoryFullName="Primitive" LastDependency="VL.CoreLib.vl">
+              <Choice Kind="ImmutableTypeFlag" Name="Boolean" />
+            </p:TypeAnnotation>
+            <p:ValueBoxSettings>
+              <p:buttonmode p:Assembly="VL.UI.Forms" p:Type="VL.HDE.PatchEditor.Editors.ButtonModeEnum">Toggle</p:buttonmode>
+            </p:ValueBoxSettings>
+          </Pad>
         </Canvas>
         <Patch Id="O9xJLBchsLVNYbUACiJ0lm" Name="Create" />
         <Patch Id="Ki1hvooTsWhP2jkewEfAY9" Name="Update" />
@@ -200,10 +224,12 @@
         <Link Id="Ju5kRd1nnpJOTPdqTI5oTI" Ids="Pu4wwZ1jYkfPg2mEj77DQW,EexEiRQkuFYLOLIGuT6Vgi" />
         <Link Id="O6KYjEQQqkkOT7f7dN8w35" Ids="PVqgAzGo4TNMOVocJydfeS,S9pyrK0EmEUMiUDf49aZ62" />
         <Link Id="CKhgCUOTTC3Lqo1xrZnXF2" Ids="Rnqn3hITq8RNAqByOrFVLv,SXESn6KFKAmQQxuavmU7n2" />
+        <Link Id="P3BzuxiEOJJNRMYQjgFnwF" Ids="Bud5xRUpfZiOo6fxnYNT5f,SWgMEBbp3dePvfqwHMvdLp" />
+        <Link Id="ElcQDY8YvPtPMgGY9Gv8yc" Ids="URGmijtOT7rOuSsaQrd26o,Fp6SSIzPMYLLyYqVWqrNzq" />
       </Patch>
     </Node>
   </Patch>
-  <NugetDependency Id="TugQA41hz6gMTQv2Ue3Tha" Location="VL.CoreLib" Version="2024.6.6" />
-  <NugetDependency Id="EARv94p4Aj5N8NlvBot5uY" Location="VL.Stride" Version="2024.6.6" />
+  <NugetDependency Id="TugQA41hz6gMTQv2Ue3Tha" Location="VL.CoreLib" Version="2025.7.0-0328-g5bed1bf840" />
+  <NugetDependency Id="EARv94p4Aj5N8NlvBot5uY" Location="VL.Stride" Version="2025.7.0-0328-g5bed1bf840" />
   <NugetDependency Id="B2wRwAZuLvaMFaYtvk56Yh" Location="VL.OpenEXR" Version="0.0.0" />
 </Document>

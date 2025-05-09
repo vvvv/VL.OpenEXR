@@ -1,6 +1,9 @@
 ﻿using System;
+using System.IO;
 using System.Runtime.InteropServices;
+using Stride.Core.Mathematics;
 using Stride.Graphics;
+using VL.OpenEXR;
 
 namespace OpenEXR
 {
@@ -33,8 +36,14 @@ namespace OpenEXR
         [DllImport("VL.OpenEXR.Native.dll")]
         static extern Int32 load_from_path(string path, out int width, out int height, out int num_channels, out ExrPixelFormat format, out IntPtr data);
 
-        public static Texture LoadFromPath(string path, GraphicsDevice device)
+        public static Texture LoadFromPath(string path, GraphicsDevice device, bool useOpenEXRCore = true)
         {
+            if (Path.GetExtension(path) == ".hdr")
+                useOpenEXRCore = false;
+
+            if (useOpenEXRCore)
+                return LoadFromPathOpenEXRCore(path, device);
+
             ExrPixelFormat exrFormat;
             PixelFormat format;
             IntPtr ptr;
@@ -81,6 +90,17 @@ namespace OpenEXR
             Marshal.FreeCoTaskMem(ptr);
 
             return texture;
+        }
+
+        private static unsafe Texture LoadFromPathOpenEXRCore(string path, GraphicsDevice device)
+        {
+            using var context = ExrContext.OpenRead(path);
+            var w = context.GetDataWindow(partIndex: 0);
+            using var memory = context.GetData(partIndex: 0);
+            using var handle = memory.Memory.Pin();
+            var rowPitch = w.Width * sizeof(Color4);
+            return Texture.New(device, TextureDescription.New2D(w.Width, w.Height, PixelFormat.R32G32B32A32_Float, usage: GraphicsResourceUsage.Immutable), 
+                new DataBox((nint)handle.Pointer, rowPitch, rowPitch * w.Height));
         }
     }
 

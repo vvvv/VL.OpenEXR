@@ -28,8 +28,16 @@ OpenEXR.Interop
 --methodClassName
 exr
 --libraryPath
-OpenEXR-3_3
+OpenEXRCore-3_3
 --traverse
 C:\Users\elias\source\repos\vcpkg\installed\x64-windows\include\OpenEXR\openexr.h
 --output
 generated
+-r
+_priv_exr_context_t=exr_context_t
+_exr_context_initializer_v3=exr_context_initializer_t
+exr_transcoding_pipeline_buffer_id=exr_transcoding_pipeline_buffer_id_t
+exr_default_write_mode=exr_default_write_mode_t
+exr_attr_list_access_mode=exr_attr_list_access_mode_t
+_exr_encode_pipeline=exr_encode_pipeline_t
+_exr_decode_pipeline=exr_decode_pipeline_t

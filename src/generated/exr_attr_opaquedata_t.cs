@@ -21,13 +21,13 @@ namespace OpenEXR.Interop
         public void* unpacked_data;
 
         [NativeTypeName("exr_result_t (*)(exr_context_t, const void *, int32_t, int32_t *, void **)")]
-        public delegate* unmanaged[Cdecl]<_priv_exr_context_t*, void*, int, int*, void**, int> unpack_func_ptr;
+        public delegate* unmanaged[Cdecl]<exr_context_t*, void*, int, int*, void**, int> unpack_func_ptr;
 
         [NativeTypeName("exr_result_t (*)(exr_context_t, const void *, int32_t, int32_t *, void *)")]
-        public delegate* unmanaged[Cdecl]<_priv_exr_context_t*, void*, int, int*, void*, int> pack_func_ptr;
+        public delegate* unmanaged[Cdecl]<exr_context_t*, void*, int, int*, void*, int> pack_func_ptr;
 
         [NativeTypeName("void (*)(exr_context_t, void *, int32_t)")]
-        public delegate* unmanaged[Cdecl]<_priv_exr_context_t*, void*, int, void> destroy_unpacked_func_ptr;
+        public delegate* unmanaged[Cdecl]<exr_context_t*, void*, int, void> destroy_unpacked_func_ptr;
 
         [InlineArray(4)]
         public partial struct _pad_e__FixedBuffer

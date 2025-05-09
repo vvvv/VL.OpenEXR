@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" xmlns:r="reflection" Id="KKFE0MPJIc6LlWOjcXeMEx" LanguageVersion="2024.6.6" Version="0.128">
+<Document xmlns:p="property" xmlns:r="reflection" Id="KKFE0MPJIc6LlWOjcXeMEx" LanguageVersion="2025.7.0-0328-g5bed1bf840" Version="0.128">
   <Patch Id="IbW8cR8uZ8rOQKPIBfaIVA">
     <Canvas Id="BdoB2gFaudQPle25UEBSrc" DefaultCategory="Main" CanvasType="FullCategory">
       <!--
@@ -57,6 +57,7 @@
                       <Pin Id="OJbKkQ1ltvKLx1hHbhtMpa" Name="Path" Kind="InputPin" />
                       <Pin Id="DVYrKsJjVpKQBcZP7bvjFc" Name="Device" Kind="InputPin" />
                       <Pin Id="FLpemKM5uBaQANjQzXtmNS" Name="Result" Kind="OutputPin" />
+                      <Pin Id="DgBMDNMB6CIN0MR5l1vcJp" Name="Use Open EXRCore" Kind="InputPin" />
                     </Node>
                   </Patch>
                 </Node>
@@ -74,7 +75,7 @@
               <Pin Id="Cp5SoAsfdlVPOrd7In58Md" Name="Simulate" Kind="InputPin" />
               <Pin Id="I12dlV1LEQ7PY2OtrId5M5" Name="Output" Kind="OutputPin" />
             </Node>
-            <Node Bounds="499,342,25,19" Id="KnkZbBWS0e9NHMcAzLR0v0">
+            <Node Bounds="499,342,37,19" Id="KnkZbBWS0e9NHMcAzLR0v0">
               <p:NodeReference LastCategoryFullName="Primitive.Boolean" LastDependency="CoreLibBasics.vl">
                 <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                 <Choice Kind="OperationCallFlag" Name="AND" />
@@ -120,6 +121,7 @@
               <Pin Id="TC7Kx8PNFk3LnfzLN3M8cL" Name="Input 2" Kind="InputPin" />
               <Pin Id="GJUh5oFameqMXHHdxv9xIc" Name="Output" Kind="StateOutputPin" />
             </Node>
+            <ControlPoint Id="I7KJ4Y6tTJUPtpV1Z6smOc" Bounds="850,230" />
           </Canvas>
           <ProcessDefinition Id="HOTqrhAmJsIQLXEURFZ6CN">
             <Fragment Id="OXfqGzP4I1ENkyZNS7j7uW" Patch="UPTDYLXB0k3O3MLDSnEj5J" Enabled="true" />
@@ -156,7 +158,10 @@
               </p:TypeAnnotation>
             </Pin>
             <Pin Id="LzyOznzNuQONNeQ5ADWdZm" Name="Texture" Kind="OutputPin" Bounds="489,768" />
+            <Pin Id="Mbi1ybiGEjqP3MI8PVDuCp" Name="Use Open EXRCore" Kind="InputPin" />
           </Patch>
+          <Link Id="EUVsLWNkiZCQW4VQpFasxD" Ids="I7KJ4Y6tTJUPtpV1Z6smOc,DgBMDNMB6CIN0MR5l1vcJp" />
+          <Link Id="J7qmcjtxzjSOF4VM6cWIFA" Ids="Mbi1ybiGEjqP3MI8PVDuCp,I7KJ4Y6tTJUPtpV1Z6smOc" IsHidden="true" />
         </Patch>
       </Node>
       <!--
@@ -532,8 +537,8 @@
   </Patch>
   <PlatformDependency Id="UuYjpCh8TmeQMHFzoqqmcD" Location="./lib/netstandard2.0/VL.OpenEXR.dll" />
   <PlatformDependency Id="Ni2bfrnGNIIPR2aLjHkTxD" Location="Stride.Graphics.dll" />
-  <NugetDependency Id="KV3o8SB8qfqPlrlChNuLf9" Location="VL.Stride" Version="2024.6.6" />
-  <NugetDependency Id="LGFGujr8QU6M2BKEGXaHQE" Location="VL.Stride.Runtime" Version="2024.6.6" />
-  <NugetDependency Id="V0Nk8XJSMMIMN5lYyQoxp7" Location="VL.CoreLib" Version="2024.6.6" />
-  <NugetDependency Id="EwEVo3SbsTbPl8FuHmyBC2" Location="VL.Stride.TextureFX" Version="2024.6.6" />
+  <NugetDependency Id="KV3o8SB8qfqPlrlChNuLf9" Location="VL.Stride" Version="2025.7.0-0328-g5bed1bf840" />
+  <NugetDependency Id="LGFGujr8QU6M2BKEGXaHQE" Location="VL.Stride.Runtime" Version="2025.7.0-0328-g5bed1bf840" />
+  <NugetDependency Id="V0Nk8XJSMMIMN5lYyQoxp7" Location="VL.CoreLib" Version="2025.7.0-0328-g5bed1bf840" />
+  <NugetDependency Id="EwEVo3SbsTbPl8FuHmyBC2" Location="VL.Stride.TextureFX" Version="2025.7.0-0328-g5bed1bf840" />
 </Document>
