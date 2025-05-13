@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using Stride.Core.Mathematics;
 using Stride.Graphics;
 using VL.OpenEXR;
 
@@ -37,33 +36,74 @@ namespace OpenEXR
         [DllImport("VL.OpenEXR.Native.dll")]
         static extern Int32 load_from_path(string path, out int width, out int height, out int num_channels, out ExrPixelFormat format, out IntPtr data);
 
-        public static Texture LoadFromPath(string path, GraphicsDevice device, bool useOpenEXRCore = true)
+        public static Texture LoadFromPath(string path, GraphicsDevice device)
         {
             if (Path.GetExtension(path) == ".hdr")
-                useOpenEXRCore = false;
+                return LoadHDR(path, device);
+            else
+                return LoadEXR(path, device);
+        }
 
-            if (useOpenEXRCore)
-                return LoadFromPathOpenEXRCore(path, device);
+        private static unsafe Texture LoadEXR(string path, GraphicsDevice device, int partIndex = 0)
+        {
+            using var context = ExrContext.OpenRead(path);
+            var part = context.GetPart(partIndex);
+            var selectedChannels = part.GetChannels()
+                .OrderBy(c => c.Order)
+                .Take(4)
+                .ToArray();
 
+            var exrFormat = (ExrPixelFormat)selectedChannels[0].PixelType;
+            var pixelFormat = GetPixelFormat(exrFormat, selectedChannels.Length);
+            if (pixelFormat == PixelFormat.R16G16B16A16_Float && selectedChannels.Length == 3)
+            {
+                // We use PixelFormat.R16G16B16A16_Float for 3 channels, so we need to add an alpha channel
+                selectedChannels = selectedChannels.Append(new ExrChannel(-1, "A", Interop.exr_pixel_type_t.EXR_PIXEL_HALF)).ToArray();
+            }
+
+            return exrFormat switch
+            {
+                ExrPixelFormat.U32 => Decode<UIntElement>(),
+                ExrPixelFormat.F16 => Decode<HalfElement>(),
+                ExrPixelFormat.F32 => Decode<FloatElement>(),
+                _ => throw new NotImplementedException()
+            };
+
+            Texture Decode<T>() where T : unmanaged, IElement<T>
+            {
+                using var memory = part.Decode<T>(selectedChannels);
+                using var handle = memory.Memory.Pin();
+
+                var dataWindow = part.GetDataWindow();
+                return CreateTexture((nint)handle.Pointer, dataWindow.Width, dataWindow.Height, pixelFormat, device);
+            }
+        }
+
+        private static unsafe Texture LoadHDR(string path, GraphicsDevice device)
+        {
             var result = load_from_path(path, out var width, out var height, out var numChannels, out var exrFormat, out var ptr);
 
-            if (result != 0) 
+            if (result != 0)
                 return null;
 
             if (exrFormat == ExrPixelFormat.Unknown || ptr == IntPtr.Zero)
                 return null;
 
             var format = GetPixelFormat(exrFormat, numChannels);
-            var rowPitch = width * format.SizeInBytes();
-
-            var texture = Texture.New(
-                device,
-                TextureDescription.New2D(width, height, format, usage: GraphicsResourceUsage.Immutable),
-                new DataBox(ptr, rowPitch, rowPitch * height));
+            var texture = CreateTexture(ptr, width, height, format, device);
 
             Marshal.FreeCoTaskMem(ptr);
 
             return texture;
+        }
+
+        private static Texture CreateTexture(nint data, int width, int height, PixelFormat format, GraphicsDevice device)
+        {
+            var rowPitch = width * format.SizeInBytes();
+            return Texture.New(
+                device,
+                TextureDescription.New2D(width, height, format, usage: GraphicsResourceUsage.Immutable),
+                new DataBox(data, rowPitch, rowPitch * height));
         }
 
         private static PixelFormat GetPixelFormat(ExrPixelFormat exrFormat, int numChannels)
@@ -84,45 +124,6 @@ namespace OpenEXR
                 (ExrPixelFormat.U32, 1) => PixelFormat.R32_UInt,
                 _ => PixelFormat.None,
             };
-        }
-
-        private static unsafe Texture LoadFromPathOpenEXRCore(string path, GraphicsDevice device, int partIndex = 0)
-        {
-            using var context = ExrContext.OpenRead(path);
-            var part = context.GetPart(partIndex);
-            var selectedChannels = part.GetChannels()
-                .OrderBy(c => c.Order)
-                .Take(4)
-                .ToArray();
-
-            var exrFormat = (ExrPixelFormat)selectedChannels[0].PixelType;
-            var pixelFormat = GetPixelFormat(exrFormat, selectedChannels.Length);
-            if (pixelFormat == PixelFormat.R16G16B16A16_Float && selectedChannels.Length == 3)
-            {
-                // We use PixelFormat.R16G16B16A16_Float for 3 channels, so we need to add an alpha channel
-                selectedChannels = selectedChannels.Append(new ExrChannel(-1, "A", Interop.exr_pixel_type_t.EXR_PIXEL_HALF)).ToArray();
-            }
-
-            return exrFormat switch
-            { 
-                ExrPixelFormat.U32 => Decode<UIntElement>(),
-                ExrPixelFormat.F16 => Decode<HalfElement>(),
-                ExrPixelFormat.F32 => Decode<FloatElement>(),
-                _ => throw new NotImplementedException()
-            };
-
-            Texture Decode<T>() where T : unmanaged, IElement<T>
-            {
-                using var memory = part.Decode<T>(selectedChannels);
-                using var handle = memory.Memory.Pin();
-
-                var dataWindow = part.GetDataWindow();
-                var rowPitch = dataWindow.Width * pixelFormat.SizeInBytes();
-                return Texture.New(
-                    device, 
-                    TextureDescription.New2D(dataWindow.Width, dataWindow.Height, pixelFormat, usage: GraphicsResourceUsage.Immutable),
-                    new DataBox((nint)handle.Pointer, rowPitch, rowPitch * dataWindow.Height));
-            }
         }
     }
 
