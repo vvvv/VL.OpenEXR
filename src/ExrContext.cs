@@ -135,7 +135,6 @@ public unsafe class ExrPart(ExrContext context, int partIndex)
     {
         var scanlines = GetScanlinesPerChunk();
         var elementCount = selectedChannels.Length;
-        var channelCount = GetChannelCount();
 
         var chunkInfo = ReadScanlineChunkInfo(window.Y);
 
@@ -186,7 +185,7 @@ public unsafe class ExrPart(ExrContext context, int partIndex)
                     if (selectedChannels[c].Index >= 0)
                         continue;
 
-                    for (var dst = dstData0 + c; dst < dstData1; dst += channelCount)
+                    for (var dst = dstData0 + c; dst < dstData1; dst += elementCount)
                         *dst = T.One;
                 }
 
