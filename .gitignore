@@ -22,3 +22,4 @@ VL*.dll
 
 # stride assembly
 Stride*.dll
+/lib/net8.0/VL.OpenEXR.dll

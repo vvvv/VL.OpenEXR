@@ -7,6 +7,8 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using CommunityToolkit.HighPerformance;
+using CommunityToolkit.HighPerformance.Buffers;
 using OpenEXR;
 using OpenEXR.Interop;
 using Stride.Core.Mathematics;
@@ -77,6 +79,13 @@ public unsafe class ExrPart(ExrContext context, int partIndex)
         return new Rectangle(box.min.x, box.min.y, box.max.x - box.min.x + 1, box.max.y - box.min.y + 1);
     }
 
+    public Rectangle GetDisplayWindow()
+    {
+        exr_attr_box2i_t box;
+        exr_get_display_window(Handle, PartIndex, &box).ThrowIfError();
+        return new Rectangle(box.min.x, box.min.y, box.max.x - box.min.x + 1, box.max.y - box.min.y + 1);
+    }
+
     public exr_storage_t GetStorage()
     {
         exr_storage_t result;
@@ -115,19 +124,37 @@ public unsafe class ExrPart(ExrContext context, int partIndex)
         return result;
     }
 
-    public IMemoryOwner<T> Decode<T>(ExrChannel[] selectedChannels) where T : unmanaged, IElement<T>
+    public IMemoryOwner<T> Decode<T>(ExrChannel[] selectedChannels, Rectangle displayWindow) where T : unmanaged, IElement<T>
     {
         var storage = GetStorage();
         if (storage != exr_storage_t.EXR_STORAGE_SCANLINE)
             throw new NotSupportedException($"Unsupported storage type: {storage}");
 
-        var window = GetDataWindow();
-        var memoryOwner = MemoryPool<T>.Shared.Rent(window.Width * window.Height * selectedChannels.Length);
-        fixed (T* data = memoryOwner.Memory.Span)
+        var dataWindow = GetDataWindow();
+        var c0 = ReadScanlineChunkInfo(displayWindow.Top);
+        var c1 = ReadScanlineChunkInfo(Math.Max(displayWindow.Top, displayWindow.Bottom - 1));
+        var scanlineWindow = new Rectangle(c0.start_x, c0.start_y, c0.width, (c1.idx - c0.idx) * c0.height + c1.height);
+
+        var scanlineMemory = MemoryOwner<T>.Allocate(scanlineWindow.Width * scanlineWindow.Height * selectedChannels.Length);
+        fixed (T* data = scanlineMemory.Span)
         {
-            Decode(data, window, selectedChannels);
+            Decode(data, scanlineWindow, selectedChannels);
         }
-        return memoryOwner;
+
+        if (displayWindow != dataWindow)
+        {
+            // Slice it accordingly
+            using (scanlineMemory)
+            {
+                var displayMemory = MemoryOwner<T>.Allocate(displayWindow.Width * displayWindow.Height * selectedChannels.Length);
+                scanlineMemory.Span.AsSpan2D(scanlineWindow.Height, scanlineWindow.Width * selectedChannels.Length)
+                    .Slice(displayWindow.Y - scanlineWindow.Y, (displayWindow.X - scanlineWindow.X) * selectedChannels.Length, displayWindow.Height, displayWindow.Width * selectedChannels.Length)
+                    .CopyTo(displayMemory.Span);
+                return displayMemory;
+            }
+        }
+
+        return scanlineMemory;
     }
 
     private void Decode<T>(T* data, Rectangle window, ExrChannel[] selectedChannels)

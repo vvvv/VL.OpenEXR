@@ -3,7 +3,9 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Stride.Graphics;
+using Stride.Core.Mathematics;
 using VL.OpenEXR;
+using VL.Core;
 
 namespace OpenEXR
 {
@@ -36,15 +38,15 @@ namespace OpenEXR
         [DllImport("VL.OpenEXR.Native.dll")]
         static extern Int32 load_from_path(string path, out int width, out int height, out int num_channels, out ExrPixelFormat format, out IntPtr data);
 
-        public static Texture LoadFromPath(string path, GraphicsDevice device)
+        public static Texture LoadFromPath(string path, GraphicsDevice device, int partIndex = 0, Optional<RectangleF> window = default)
         {
             if (Path.GetExtension(path) == ".hdr")
                 return LoadHDR(path, device);
             else
-                return LoadEXR(path, device);
+                return LoadEXR(path, device, partIndex, window);
         }
 
-        private static unsafe Texture LoadEXR(string path, GraphicsDevice device, int partIndex = 0)
+        private static unsafe Texture LoadEXR(string path, GraphicsDevice device, int partIndex = 0, Optional<RectangleF> window = default)
         {
             using var context = ExrContext.OpenRead(path);
             var part = context.GetPart(partIndex);
@@ -71,10 +73,15 @@ namespace OpenEXR
 
             Texture Decode<T>() where T : unmanaged, IElement<T>
             {
-                using var memory = part.Decode<T>(selectedChannels);
+                var dataWindow = part.GetDataWindow();
+                if (window.HasValue)
+                    dataWindow = Rectangle.Intersect(dataWindow, (Rectangle)window.Value);
+                if (dataWindow.IsEmpty)
+                    return null;
+
+                using var memory = part.Decode<T>(selectedChannels, dataWindow);
                 using var handle = memory.Memory.Pin();
 
-                var dataWindow = part.GetDataWindow();
                 return CreateTexture((nint)handle.Pointer, dataWindow.Width, dataWindow.Height, pixelFormat, device);
             }
         }

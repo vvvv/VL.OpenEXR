@@ -75,16 +75,22 @@
                       <Pin Id="OJbKkQ1ltvKLx1hHbhtMpa" Name="Path" Kind="InputPin" />
                       <Pin Id="DVYrKsJjVpKQBcZP7bvjFc" Name="Device" Kind="InputPin" />
                       <Pin Id="FLpemKM5uBaQANjQzXtmNS" Name="Result" Kind="OutputPin" />
+                      <Pin Id="HVIR1UcGMykLgL3pQV9Hf8" Name="Part Index" Kind="InputPin" />
+                      <Pin Id="TwI8iTQN64QL1Ajism8ru3" Name="Window" Kind="InputPin" />
                     </Node>
                   </Patch>
                   <ControlPoint Id="UMN3JTA7NbIPCsBFkpqTLG" Bounds="425,473" Alignment="Bottom" />
                   <ControlPoint Id="OayyhgelHNVNKNHMdLiAtq" Bounds="425,383" Alignment="Top" />
                 </Node>
               </Patch>
+              <ControlPoint Id="SwBy1YByywmLs2lgpKZa7p" Bounds="476,294" Alignment="Top" />
+              <ControlPoint Id="T9ynGHGowmOLyAkwO9iH15" Bounds="550,294" Alignment="Top" />
             </Node>
-            <ControlPoint Id="GVKDLIl9IrbM7g9rBgzp96" Bounds="512,250" />
+            <ControlPoint Id="GVKDLIl9IrbM7g9rBgzp96" Bounds="390,270" />
             <ControlPoint Id="ODKqz4cv9JgNMnHTkNfrCn" Bounds="425,250,-11,0" />
             <ControlPoint Id="BH7s0lybq94LxSO3kbMhLl" Bounds="425,531" />
+            <ControlPoint Id="JuNWyeQZ5BwL9gLiymZvfo" Bounds="476,250" />
+            <ControlPoint Id="DM7qTOGAiJtLRUeFXXpSUA" Bounds="550,250" />
           </Canvas>
           <ProcessDefinition Id="HOTqrhAmJsIQLXEURFZ6CN">
             <Fragment Id="OXfqGzP4I1ENkyZNS7j7uW" Patch="UPTDYLXB0k3O3MLDSnEj5J" Enabled="true" />
@@ -97,12 +103,14 @@
           <Link Id="UbGW9zMehdTPP5c3RFyfXX" Ids="ODKqz4cv9JgNMnHTkNfrCn,USUlqOnlJ8SMALaftrIJgb" />
           <Link Id="SEB2wz0Ue8ML2wbcbNt4BN" Ids="USUlqOnlJ8SMALaftrIJgb,QsrpnOVnD4UQE53lOcfc7w" />
           <Patch Id="UPTDYLXB0k3O3MLDSnEj5J" Name="Create" />
-          <Patch Id="UZrG7rrWPLHNfXju3MSHj2" Name="Update">
+          <Patch Id="UZrG7rrWPLHNfXju3MSHj2" Name="Update" ManuallySortedPins="true">
             <Pin Id="KVyyBi063lEPVgBYhiCGZq" Name="Path" Kind="InputPin" Bounds="443,206">
               <p:TypeAnnotation LastCategoryFullName="IO" LastDependency="VL.CoreLib.vl">
                 <Choice Kind="TypeFlag" Name="Path" />
               </p:TypeAnnotation>
             </Pin>
+            <Pin Id="U0fAHesvsy6PqPDek5qeYD" Name="Part Index" Kind="InputPin" />
+            <Pin Id="AGF6YWtgkPAOw9octvCnMQ" Name="Window" Kind="InputPin" />
             <Pin Id="UZ0vjzkA4yyOwfxFcpk7v2" Name="Reload" Kind="InputPin" Bounds="464,244">
               <p:TypeAnnotation LastCategoryFullName="Primitive" LastDependency="VL.CoreLib.vl">
                 <Choice Kind="TypeFlag" Name="Boolean" />
@@ -118,6 +126,12 @@
           <Link Id="OLqUdWnk7vnODmab4IjSlX" Ids="OayyhgelHNVNKNHMdLiAtq,UMN3JTA7NbIPCsBFkpqTLG" IsFeedback="true" />
           <Link Id="U2HzBfveBmxO3QtcLC4p1a" Ids="FLpemKM5uBaQANjQzXtmNS,UMN3JTA7NbIPCsBFkpqTLG" />
           <Link Id="B6WSFthZHVsMTymetsD1Na" Ids="UMN3JTA7NbIPCsBFkpqTLG,ALUFsJ0Fw6LMAmwlGlwdPy" />
+          <Link Id="HNzvqOCoySCNnHCGlTya9k" Ids="SwBy1YByywmLs2lgpKZa7p,HVIR1UcGMykLgL3pQV9Hf8" />
+          <Link Id="BQFx8Gkg9iQNh2AGIoEELW" Ids="JuNWyeQZ5BwL9gLiymZvfo,SwBy1YByywmLs2lgpKZa7p" />
+          <Link Id="KL7kpB5lTrIOGPiInbCmlv" Ids="U0fAHesvsy6PqPDek5qeYD,JuNWyeQZ5BwL9gLiymZvfo" IsHidden="true" />
+          <Link Id="UIJtBtsmoxSPjdkbOXRQnC" Ids="T9ynGHGowmOLyAkwO9iH15,TwI8iTQN64QL1Ajism8ru3" />
+          <Link Id="JWzGTfHVTFjMr1pmquKynT" Ids="DM7qTOGAiJtLRUeFXXpSUA,T9ynGHGowmOLyAkwO9iH15" />
+          <Link Id="IOk0ngUcWHaQVkLGEm5qH2" Ids="AGF6YWtgkPAOw9octvCnMQ,DM7qTOGAiJtLRUeFXXpSUA" IsHidden="true" />
         </Patch>
       </Node>
       <!--
