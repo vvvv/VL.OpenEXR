@@ -1,4 +1,0 @@
-[submodule "tests/openexr-images"]
-	path = tests/openexr-images
-	url = https://github.com/AcademySoftwareFoundation/openexr-images.git
-	branch = main
