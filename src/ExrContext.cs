@@ -178,25 +178,44 @@ public unsafe class ExrPart(ExrContext context, int partIndex)
         }
         else if (storage == exr_storage_t.EXR_STORAGE_TILED)
         {
-            // TODO: Display window
             var tileLevel = new Int2(0, 0);
             var tileCount = GetTileCount(tileLevel);
             var tileSize = GetTileSizes(tileLevel);
 
-            //var chunkWindow = new Rectangle(
-            //    (displayWindow.X / tileSize.Width) * tileSize.Width,
-            //    (displayWindow.Y / tileSize.Height) * tileSize.Height,
-            //    (int)(Math.Ceiling((float)displayWindow.Width / tileSize.Width) * tileSize.Width),
-            //    (int)(Math.Ceiling((float)displayWindow.Height / tileSize.Height) * tileSize.Height));
-            var chunkWindow = dataWindow;
+            var tiles = new List<Int2>(tileCount.X * tileCount.Y);
+            var chunkWindow = Rectangle.Empty;
+            for (int y = 0; y < tileCount.Y; y++)
+            {
+                for (int x = 0; x < tileCount.X; x++)
+                {
+                    var tileRect = new Rectangle(x * tileSize.Width + dataWindow.X, y * tileSize.Height + dataWindow.Y, tileSize.Width, tileSize.Height);
+                    if (displayWindow.Intersects(tileRect))
+                    {
+                        tiles.Add(new Int2(x, y));
+                        chunkWindow = Rectangle.Union(chunkWindow, tileRect);
+                    }
+                }
+            }
 
+            chunkWindow = Rectangle.Intersect(chunkWindow, dataWindow);
             var chunkMemory = MemoryOwner<T>.Allocate(chunkWindow.Width * chunkWindow.Height * selectedChannels.Length);
             fixed (T* data = chunkMemory.Span)
             {
-                DecodeTiles(data, chunkWindow, tileLevel, selectedChannels);
+                DecodeTiles(data, tiles, chunkWindow, tileLevel, selectedChannels);
             }
 
-            // TODO: Slice it accordingly
+            if (displayWindow != dataWindow)
+            {
+                // Slice it accordingly
+                using (chunkMemory)
+                {
+                    var displayMemory = MemoryOwner<T>.Allocate(displayWindow.Width * displayWindow.Height * selectedChannels.Length);
+                    chunkMemory.Span.AsSpan2D(chunkWindow.Height, chunkWindow.Width * selectedChannels.Length)
+                        .Slice(displayWindow.Y - chunkWindow.Y, (displayWindow.X - chunkWindow.X) * selectedChannels.Length, displayWindow.Height, displayWindow.Width * selectedChannels.Length)
+                        .CopyTo(displayMemory.Span);
+                    return displayMemory;
+                }
+            }
 
             return chunkMemory;
         }
@@ -212,18 +231,13 @@ public unsafe class ExrPart(ExrContext context, int partIndex)
         var scanlines = GetScanlinesPerChunk();
         var elementCount = selectedChannels.Length;
 
-        var chunkInfo = ReadScanlineChunkInfo(window.Y);
-
         Parallel.ForEach(
             source: Partitioner.Create(window.Y, window.Y + window.Height, scanlines),
             localInit: () =>
             {
-                var d = Marshal.AllocHGlobal(sizeof(exr_decode_pipeline_t));
-                var ci = chunkInfo;
-                var decoder = (exr_decode_pipeline_t*)d;
-                exr_decoding_initialize(Handle, PartIndex, &ci, decoder).ThrowIfError();
-                exr_decoding_choose_default_routines(Handle, PartIndex, decoder).ThrowIfError();
-                return d;
+                var decoder = (exr_decode_pipeline_t*)Marshal.AllocHGlobal(sizeof(exr_decode_pipeline_t));
+                decoder->channels = null;
+                return new nint(decoder);
             },
             body: (t, s, d) =>
             {
@@ -235,34 +249,43 @@ public unsafe class ExrPart(ExrContext context, int partIndex)
                 var dstData1 = data + dstY1 * window.Width * elementCount;
 
                 var chunkInfo = ReadScanlineChunkInfo(y0);
-
-                exr_decoding_update(Handle, PartIndex, &chunkInfo, decoder).ThrowIfError();
-
-                for (int c = 0; c < decoder->channel_count; c++)
+                if (decoder->channels is null)
                 {
-                    ref var channel = ref decoder->channels[c];
-                    var i = GetElementIndex(selectedChannels, c);
-                    if (i < 0)
-                    {
-                        channel.decode_to_ptr = null;
-                        continue;
-                    }
+                    exr_decoding_initialize(Handle, PartIndex, &chunkInfo, decoder).ThrowIfError();
+                    exr_decoding_choose_default_routines(Handle, PartIndex, decoder).ThrowIfError();
 
-                    channel.user_bytes_per_element = (short)sizeof(T);
-                    channel.user_data_type = (ushort)T.PixelType;
-                    channel.user_pixel_stride = elementCount * sizeof(T);
-                    channel.user_line_stride = window.Width * channel.user_pixel_stride;
-                    channel.decode_to_ptr = (byte*)(dstData0 + i);
+                    for (int i = 0; i < selectedChannels.Length; i++)
+                    {
+                        var c = selectedChannels[i];
+                        if (c.Index < 0)
+                            continue;
+
+                        ref var channel = ref decoder->channels[c.Index];
+                        channel.user_bytes_per_element = (short)sizeof(T);
+                        channel.user_data_type = (ushort)T.PixelType;
+                        channel.user_pixel_stride = elementCount * sizeof(T);
+                        channel.user_line_stride = window.Width * channel.user_pixel_stride;
+                    }
+                }
+                else
+                {
+                    exr_decoding_update(Handle, PartIndex, &chunkInfo, decoder).ThrowIfError();
                 }
 
-                // Fill remaining channels with ones
-                for (int c = 0; c < selectedChannels.Length; c++)
+                for (int i = 0; i < selectedChannels.Length; i++)
                 {
-                    if (selectedChannels[c].Index >= 0)
-                        continue;
-
-                    for (var dst = dstData0 + c; dst < dstData1; dst += elementCount)
-                        *dst = T.One;
+                    var c = selectedChannels[i];
+                    if (c.Index >= 0)
+                    {
+                        ref var channel = ref decoder->channels[c.Index];
+                        channel.decode_to_ptr = (byte*)(dstData0 + i);
+                    }
+                    else
+                    {
+                        // Fill channels not present in file with ones
+                        for (var dst = dstData0 + i; dst < dstData1; dst += elementCount)
+                            *dst = T.One;
+                    }
                 }
 
                 exr_decoding_run(Handle, PartIndex, decoder).ThrowIfError();
@@ -272,42 +295,25 @@ public unsafe class ExrPart(ExrContext context, int partIndex)
             localFinally: d =>
             {
                 var decoder = (exr_decode_pipeline_t*)d;
-                exr_decoding_destroy(Handle, decoder).ThrowIfError();
+                if (decoder->channels != null)
+                    exr_decoding_destroy(Handle, decoder).ThrowIfError();
                 Marshal.FreeHGlobal(d);
             });
     }
 
-    private void DecodeTiles<T>(T* data, Rectangle window, Int2 level, ExrChannel[] selectedChannels)
+    private void DecodeTiles<T>(T* data, List<Int2> tiles, Rectangle window, Int2 level, ExrChannel[] selectedChannels)
         where T : unmanaged, IElement<T>
     {
         var elementCount = selectedChannels.Length;
-
-        var tileCount = GetTileCount(level);
         var tileSize = GetTileSizes(level);
-
-        var tiles = new List<Int2>(tileCount.X * tileCount.Y);
-        for (int y = 0; y < tileCount.Y; y++)
-        {
-            for (int x = 0; x < tileCount.X; x++)
-            {
-                var tileRect = new Rectangle(x * tileSize.Width, y * tileSize.Height, tileSize.Width, tileSize.Height);
-                if (window.Intersects(tileRect))
-                    tiles.Add(new Int2(x, y));
-            }
-        }
-
-        var chunkInfo = ReadTileChunkInfo(tiles[0], level);
 
         Parallel.ForEach(
             source: tiles,
             localInit: () =>
             {
-                var d = Marshal.AllocHGlobal(sizeof(exr_decode_pipeline_t));
-                var ci = chunkInfo;
-                var decoder = (exr_decode_pipeline_t*)d;
-                exr_decoding_initialize(Handle, PartIndex, &ci, decoder).ThrowIfError();
-                exr_decoding_choose_default_routines(Handle, PartIndex, decoder).ThrowIfError();
-                return d;
+                var decoder = (exr_decode_pipeline_t*)Marshal.AllocHGlobal(sizeof(exr_decode_pipeline_t));
+                decoder->channels = null;
+                return new nint(decoder);
             },
             body: (tile, s, d) =>
             {
@@ -315,38 +321,51 @@ public unsafe class ExrPart(ExrContext context, int partIndex)
                 var location = new Int2(tile.X * tileSize.Width, tile.Y * tileSize.Height);
                 var lineStride = window.Width * elementCount;
                 var dstData0 = data + location.Y * lineStride + location.X * elementCount;
-                //var dstData1 = data + dstY1 * window.Width * elementCount;
 
                 var chunkInfo = ReadTileChunkInfo(tile, level);
-
-                exr_decoding_update(Handle, PartIndex, &chunkInfo, decoder).ThrowIfError();
-
-                for (int c = 0; c < decoder->channel_count; c++)
+                if (decoder->channels is null)
                 {
-                    ref var channel = ref decoder->channels[c];
-                    var i = GetElementIndex(selectedChannels, c);
-                    if (i < 0)
-                    {
-                        channel.decode_to_ptr = null;
-                        continue;
-                    }
+                    exr_decoding_initialize(Handle, PartIndex, &chunkInfo, decoder).ThrowIfError();
+                    exr_decoding_choose_default_routines(Handle, PartIndex, decoder).ThrowIfError();
 
-                    channel.user_bytes_per_element = (short)sizeof(T);
-                    channel.user_data_type = (ushort)T.PixelType;
-                    channel.user_pixel_stride = elementCount * sizeof(T);
-                    channel.user_line_stride = window.Width * channel.user_pixel_stride;
-                    channel.decode_to_ptr = (byte*)(dstData0 + i);
+                    for (int i = 0; i < selectedChannels.Length; i++)
+                    {
+                        var c = selectedChannels[i];
+                        if (c.Index < 0)
+                            continue;
+
+                        ref var channel = ref decoder->channels[c.Index];
+                        channel.user_bytes_per_element = (short)sizeof(T);
+                        channel.user_data_type = (ushort)T.PixelType;
+                        channel.user_pixel_stride = elementCount * sizeof(T);
+                        channel.user_line_stride = window.Width * channel.user_pixel_stride;
+                    }
+                }
+                else
+                {
+                    exr_decoding_update(Handle, PartIndex, &chunkInfo, decoder).ThrowIfError();
                 }
 
-                // Fill remaining channels with ones
-                //for (int c = 0; c < selectedChannels.Length; c++)
-                //{
-                //    if (selectedChannels[c].Index >= 0)
-                //        continue;
-
-                //    for (var dst = dstData0 + c; dst < dstData1; dst += elementCount)
-                //        *dst = T.One;
-                //}
+                for (int i = 0; i < selectedChannels.Length; i++)
+                {
+                    var c = selectedChannels[i];
+                    if (c.Index >= 0)
+                    {
+                        ref var channel = ref decoder->channels[c.Index];
+                        channel.decode_to_ptr = (byte*)(dstData0 + i);
+                    }
+                    else
+                    {
+                        // Fill channels not present in file with ones
+                        for (int y = 0; y < tileSize.Height; y++)
+                        {
+                            var rowStart = dstData0 + y * lineStride;
+                            var rowEnd = rowStart + tileSize.Width * elementCount;
+                            for (var dst = rowStart + i; dst < rowEnd; dst += elementCount)
+                                *dst = T.One;
+                        }
+                    }
+                }
 
                 exr_decoding_run(Handle, PartIndex, decoder).ThrowIfError();
 
@@ -355,19 +374,10 @@ public unsafe class ExrPart(ExrContext context, int partIndex)
             localFinally: d =>
             {
                 var decoder = (exr_decode_pipeline_t*)d;
-                exr_decoding_destroy(Handle, decoder).ThrowIfError();
+                if (decoder->channels != null)
+                    exr_decoding_destroy(Handle, decoder).ThrowIfError();
                 Marshal.FreeHGlobal(d);
             });
-    }
-
-    static int GetElementIndex(ExrChannel[] channels, int index)
-    {
-        for (int i = 0; i < channels.Length; i++)
-        {
-            if (channels[i].Index == index)
-                return i;
-        }
-        return -1;
     }
 
     public HashSet<string> GetLayers()
