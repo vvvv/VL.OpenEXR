@@ -6,6 +6,8 @@ using Stride.Graphics;
 using Stride.Core.Mathematics;
 using VL.OpenEXR;
 using VL.Core;
+using CommunityToolkit.HighPerformance;
+using System.Threading;
 
 namespace OpenEXR
 {
@@ -17,17 +19,30 @@ namespace OpenEXR
         F32 = 2,
     }
 
-    public enum ExrEncoding {
+    public enum ExrEncoding 
+    {
         Uncompressed = 0,
         RLE = 1,
         ZIP1 = 2,
         ZIP16 = 3,
         PIZ = 4,
+        PXR24 = 5,
+        B44 = 6,
+        B44A = 7,
+        DWAA = 8,
+        DWAB = 9,
     }
 
-    public enum ExrOutputChannels {
+    public enum ExrOutputChannels 
+    {
         Rgb = 0,
         Rgba = 1,
+    }
+
+    public enum ExrStorage
+    {
+        Scanline,
+        Tiled
     }
 
     public static class ExrLoader
@@ -142,26 +157,54 @@ namespace OpenEXR
         [DllImport("VL.OpenEXR.Native.dll")]
         static extern int write_texture(string path, int width, int height, ExrPixelFormat format, ExrEncoding encoding, ExrOutputChannels outputChannels, IntPtr data);
 
-        public static int WriteTexture(byte[] data, string path, int width, int height, PixelFormat format, ExrEncoding encoding, ExrOutputChannels outputChannels)
+        public static void WriteTexture(byte[] data, string path, int width, int height, PixelFormat format, ExrEncoding encoding, ExrOutputChannels outputChannels, ExrStorage storage)
         {
-            return WriteTexture((ReadOnlySpan<byte>)data, path, width, height, format, encoding, outputChannels);
+            WriteTexture((ReadOnlySpan<byte>)data, path, width, height, format, encoding, outputChannels, storage);
         }
 
-        public static int WriteTexture(ReadOnlySpan<byte> data, string path, int width, int height, PixelFormat format, ExrEncoding encoding, ExrOutputChannels outputChannels)
+        public static void WriteTexture(ReadOnlySpan<byte> data, string path, int width, int height, PixelFormat format, ExrEncoding encoding, ExrOutputChannels outputChannels, ExrStorage storage)
         {
-            ExrPixelFormat exrFormat = format switch
+            switch (format)
             {
-                PixelFormat.R32G32B32A32_UInt  => ExrPixelFormat.U32,
-                PixelFormat.R16G16B16A16_Float => ExrPixelFormat.F16,
-                PixelFormat.R32G32B32A32_Float => ExrPixelFormat.F32,
-                _ => ExrPixelFormat.Unknown
-            };
+                case PixelFormat.R32G32B32A32_UInt:
+                    Encode<UIntElement>(data);
+                    break;
+                case PixelFormat.R16G16B16A16_Float:
+                    Encode<HalfElement>(data);
+                    break;
+                case PixelFormat.R32G32B32A32_Float:
+                    Encode<FloatElement>(data);
+                    break;
+                default:
+                    throw new ArgumentException($"Incompatible pixel format {format}");
+            }
 
-            if(exrFormat == ExrPixelFormat.Unknown) return 1; //return with error
-
-            fixed (byte* pointer = data)
+            void Encode<T>(ReadOnlySpan<byte> data) where T : unmanaged, IElement<T>
             {
-                return write_texture(path, width, height, exrFormat, encoding, outputChannels, new IntPtr(pointer));
+                using var context = ExrContext.OpenWrite(path, Interop.exr_default_write_mode_t.EXR_WRITE_FILE_DIRECTLY);
+                var part = context.AddPart(Path.GetFileNameWithoutExtension(path), (Interop.exr_storage_t)storage);
+
+                ReadOnlySpan<ExrChannel> channels = outputChannels switch
+                {
+                    ExrOutputChannels.Rgba =>
+                    [
+                        new(3, "R", T.PixelType),
+                        new(2, "G", T.PixelType),
+                        new(1, "B", T.PixelType),
+                        new(0, "A", T.PixelType)
+                    ],
+                    ExrOutputChannels.Rgb =>
+                    [
+                        new(2, "R", T.PixelType),
+                        new(1, "G", T.PixelType),
+                        new(0, "B", T.PixelType),
+                        new(-1, "A", T.PixelType),
+                    ],
+                    _ => throw new NotImplementedException()
+                };
+
+                var halfData = MemoryMarshal.Cast<byte, T>(data).AsSpan2D(height, width * channels.Length);
+                part.Encode(halfData, channels, (Interop.exr_compression_t)encoding, (Interop.exr_storage_t)storage);
             }
         }
     }

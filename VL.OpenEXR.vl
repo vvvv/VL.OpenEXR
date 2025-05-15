@@ -271,8 +271,8 @@
                   <Pin Id="SXr6zk3eEvRMYCLqXHQ8bi" Name="Height" Kind="InputPin" />
                   <Pin Id="JwMsNDY2EfCLWYeWaxJTSI" Name="Format" Kind="InputPin" />
                   <Pin Id="JKRByV6PGn9NHbJrLYTFtW" Name="Encoding" Kind="InputPin" />
-                  <Pin Id="Ce0wXKSSt8DPsjpx58buuL" Name="Result" Kind="OutputPin" />
                   <Pin Id="EyTk8Trx8GaM1nyLfNSJi6" Name="Output Channels" Kind="InputPin" />
+                  <Pin Id="VGmkbQRBeYyMDAg4goGTLZ" Name="Storage" Kind="InputPin" />
                 </Node>
                 <Node Bounds="242,707,44,26" Id="CI8xsSAJjDINLE7tBtGGSv">
                   <p:NodeReference LastCategoryFullName="Stride.API.Graphics.Texture" LastDependency="VL.Stride.Runtime.TypeForwards.vl">
@@ -415,6 +415,7 @@
             </Pad>
             <ControlPoint Id="EFxk27ANoxTOkAijLWfFT8" Bounds="796,670" />
             <ControlPoint Id="P9X6DRMqDRKNeTs6iiF4Rv" Bounds="814,707" />
+            <ControlPoint Id="S3jSZZY3T6MNUtDGG3zyfA" Bounds="871,750" />
           </Canvas>
           <ProcessDefinition Id="QZ0ZLEDyKf8QUDyDlI5XGP">
             <Fragment Id="My73eRfzFc1L6vSPocoHwS" Patch="KxdEs81XwB4Pe5Q2NyHe1C" Enabled="true" />
@@ -468,6 +469,7 @@
               </p:TypeAnnotation>
             </Pin>
             <Pin Id="C1HNsSNX5AFP6sEtQIeYQk" Name="Filename" Kind="InputPin" Bounds="595,270" />
+            <Pin Id="AFY1qfc0aO8OpMceie4sTE" Name="Storage" Kind="InputPin" />
             <Pin Id="NIsEwoAAdkWLvpzI4wDgBB" Name="Compression" Kind="InputPin" />
             <Pin Id="CMzKSxPuBvGL4ostxr3Bil" Name="Output Channels" Kind="InputPin" DefaultValue="Rgba" />
             <Pin Id="Ak8mIagzbPPOKoDeUN5oGc" Name="Write" Kind="InputPin" Bounds="883,290" DefaultValue="False">
@@ -481,6 +483,8 @@
           <Link Id="Pogz9Mkd2khNHbeMNiV3tv" Ids="NIsEwoAAdkWLvpzI4wDgBB,EFxk27ANoxTOkAijLWfFT8" IsHidden="true" />
           <Link Id="OW3Ap3nsY7wLxyNUgjO1WG" Ids="P9X6DRMqDRKNeTs6iiF4Rv,EyTk8Trx8GaM1nyLfNSJi6" />
           <Link Id="Ok0F95c3TWHO667dYV3PcC" Ids="CMzKSxPuBvGL4ostxr3Bil,P9X6DRMqDRKNeTs6iiF4Rv" IsHidden="true" />
+          <Link Id="BDrRmxLBby0QJWeG6G0tR5" Ids="S3jSZZY3T6MNUtDGG3zyfA,VGmkbQRBeYyMDAg4goGTLZ" />
+          <Link Id="Mspj0Ww5jLYPBlTh5VTcHh" Ids="AFY1qfc0aO8OpMceie4sTE,S3jSZZY3T6MNUtDGG3zyfA" IsHidden="true" />
         </Patch>
       </Node>
     </Canvas>
