@@ -181,6 +181,8 @@ namespace OpenEXR
 
             void Encode<T>(ReadOnlySpan<byte> data) where T : unmanaged, IElement<T>
             {
+                Directory.CreateDirectory(Path.GetDirectoryName(path));
+
                 using var context = ExrContext.OpenWrite(path, Interop.exr_default_write_mode_t.EXR_WRITE_FILE_DIRECTLY);
                 var part = context.AddPart(Path.GetFileNameWithoutExtension(path), (Interop.exr_storage_t)storage);
 

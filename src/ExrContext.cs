@@ -485,7 +485,7 @@ public unsafe class ExrPart(ExrContext context, int partIndex)
                 exr_encode_pipeline_t encoder;
                 exr_encoding_initialize(Handle, PartIndex, &ci, &encoder).ThrowIfError();
 
-                var x = tileX * tileSize.Width;
+                var x = tileX * tileSize.Width * channels.Length;
                 var y = tileY * tileSize.Height;
                 for (int i = 0; i < channels.Length; i++)
                 {
