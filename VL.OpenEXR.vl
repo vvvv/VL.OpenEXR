@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" xmlns:r="reflection" Id="KKFE0MPJIc6LlWOjcXeMEx" LanguageVersion="2025.7.0-0328-g5bed1bf840" Version="0.128">
+<Document xmlns:p="property" xmlns:r="reflection" Id="KKFE0MPJIc6LlWOjcXeMEx" LanguageVersion="2025.7.0-0351-gb3f6445d75" Version="0.128">
   <Patch Id="IbW8cR8uZ8rOQKPIBfaIVA">
     <Canvas Id="BdoB2gFaudQPle25UEBSrc" DefaultCategory="Main" CanvasType="FullCategory">
       <!--
@@ -13,7 +13,7 @@
         </p:NodeReference>
         <Patch Id="QfNEAiHvHarMGWPjHO8x26">
           <Canvas Id="NSCntxgih6vPQGU134EvoA" CanvasType="Group">
-            <Node Bounds="388,288,209,211" Id="K38Rt0ZDQmYPjHeVxJIcJY">
+            <Node Bounds="411,288,154,211" Id="K38Rt0ZDQmYPjHeVxJIcJY">
               <p:NodeReference LastCategoryFullName="Primitive" LastDependency="Builtin">
                 <Choice Kind="StatefulRegion" Name="Region (Stateful)" Fixed="true" />
                 <Choice Kind="ProcessStatefulRegion" Name="Cache" />
@@ -27,7 +27,7 @@
               <Patch Id="DeacNdEy4x0MDuyJWwv2BL" ManuallySortedPins="true">
                 <Patch Id="DTDrOsV3DI2NsfDIPPpdrz" Name="Create" ManuallySortedPins="true" />
                 <Patch Id="DHCtU123USPO8Y9N9IFhR9" Name="Then" ManuallySortedPins="true" />
-                <Node Bounds="499,321,86,19" Id="J9CNQSF6GvTOSQIcPh3vom">
+                <Node Bounds="448,360,86,19" Id="J9CNQSF6GvTOSQIcPh3vom">
                   <p:NodeReference LastCategoryFullName="Stride.Utils" LastDependency="VL.Stride.Graphics.vl">
                     <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                     <Choice Kind="ProcessAppFlag" Name="GraphicsDevice" />
@@ -38,49 +38,26 @@
                   <Pin Id="JiPYN2UzRooPEwlY407cQG" Name="Output" Kind="OutputPin" />
                   <Pin Id="BzMqrqHKltrOstgo86wm4T" Name="Node Context" Kind="InputPin" IsHidden="true" />
                 </Node>
-                <Node Bounds="411,320,59,26" Id="NBaE1zmdFolQSOIkTi7XSN">
-                  <p:NodeReference LastCategoryFullName="IO.Path" LastDependency="VL.CoreLib.vl">
+                <Node Bounds="423,390,55,19" Id="SHLtLx3QyBvMuMT3PhZDBF">
+                  <p:NodeReference LastCategoryFullName="System.Conversion" LastDependency="CoreLibBasics.vl">
                     <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-                    <CategoryReference Kind="4026531840" Name="Path" NeedsToBeDirectParent="true" />
-                    <Choice Kind="OperationCallFlag" Name="FileExists" />
+                    <Choice Kind="OperationCallFlag" Name="ToString" />
                   </p:NodeReference>
-                  <Pin Id="RCqRxrdyPnBLyF7TFAvobj" Name="Input" Kind="StateInputPin" />
-                  <Pin Id="LYRbuUR7QaLOd0HtUEYCj8" Name="Exists" Kind="OutputPin" />
+                  <Pin Id="QsrpnOVnD4UQE53lOcfc7w" Name="Input" Kind="InputPin" />
+                  <Pin Id="PUANxWaQewLLwPr6gFC2sE" Name="Result" Kind="OutputPin" />
                 </Node>
-                <Node Bounds="411,377,105,102" Id="RUwMI86XIDKPR8OdCBRP0q">
-                  <p:NodeReference LastCategoryFullName="Primitive" LastDependency="Builtin">
-                    <Choice Kind="StatefulRegion" Name="Region (Stateful)" Fixed="true" />
-                    <CategoryReference Kind="Category" Name="Primitive" />
-                    <Choice Kind="ApplicationStatefulRegion" Name="If" />
+                <Node Bounds="423,430,81,19" Id="NcdMsNt6Qr9MFZwpNBy4d9">
+                  <p:NodeReference LastCategoryFullName="OpenEXR.ExrLoader" LastDependency="VL.OpenEXR.dll">
+                    <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                    <CategoryReference Kind="AssemblyCategory" Name="OpenEXR" />
+                    <CategoryReference Kind="AssemblyCategory" Name="ExrLoader" />
+                    <Choice Kind="OperationCallFlag" Name="LoadFromPath" />
                   </p:NodeReference>
-                  <Pin Id="TqqZHidV6E6LDtnJFYqWML" Name="Condition" Kind="InputPin" />
-                  <Patch Id="GXRoo1NDyN9MijpuLEwWCQ" ManuallySortedPins="true">
-                    <Patch Id="TQXAuF7U7WcOiwGhQzLdgV" Name="Create" ManuallySortedPins="true" />
-                    <Patch Id="DTqc8TtXrgpMFrgVJbVhh3" Name="Then" ManuallySortedPins="true" />
-                    <Node Bounds="423,400,55,19" Id="SHLtLx3QyBvMuMT3PhZDBF">
-                      <p:NodeReference LastCategoryFullName="System.Conversion" LastDependency="CoreLibBasics.vl">
-                        <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-                        <Choice Kind="OperationCallFlag" Name="ToString" />
-                      </p:NodeReference>
-                      <Pin Id="QsrpnOVnD4UQE53lOcfc7w" Name="Input" Kind="InputPin" />
-                      <Pin Id="PUANxWaQewLLwPr6gFC2sE" Name="Result" Kind="OutputPin" />
-                    </Node>
-                    <Node Bounds="423,440,81,19" Id="NcdMsNt6Qr9MFZwpNBy4d9">
-                      <p:NodeReference LastCategoryFullName="OpenEXR.ExrLoader" LastDependency="VL.OpenEXR.dll">
-                        <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-                        <CategoryReference Kind="AssemblyCategory" Name="OpenEXR" />
-                        <CategoryReference Kind="AssemblyCategory" Name="ExrLoader" />
-                        <Choice Kind="OperationCallFlag" Name="LoadFromPath" />
-                      </p:NodeReference>
-                      <Pin Id="OJbKkQ1ltvKLx1hHbhtMpa" Name="Path" Kind="InputPin" />
-                      <Pin Id="DVYrKsJjVpKQBcZP7bvjFc" Name="Device" Kind="InputPin" />
-                      <Pin Id="FLpemKM5uBaQANjQzXtmNS" Name="Result" Kind="OutputPin" />
-                      <Pin Id="HVIR1UcGMykLgL3pQV9Hf8" Name="Part Index" Kind="InputPin" />
-                      <Pin Id="TwI8iTQN64QL1Ajism8ru3" Name="Window" Kind="InputPin" />
-                    </Node>
-                  </Patch>
-                  <ControlPoint Id="UMN3JTA7NbIPCsBFkpqTLG" Bounds="425,473" Alignment="Bottom" />
-                  <ControlPoint Id="OayyhgelHNVNKNHMdLiAtq" Bounds="425,383" Alignment="Top" />
+                  <Pin Id="OJbKkQ1ltvKLx1hHbhtMpa" Name="Path" Kind="InputPin" />
+                  <Pin Id="DVYrKsJjVpKQBcZP7bvjFc" Name="Device" Kind="InputPin" />
+                  <Pin Id="FLpemKM5uBaQANjQzXtmNS" Name="Result" Kind="OutputPin" />
+                  <Pin Id="HVIR1UcGMykLgL3pQV9Hf8" Name="Part Index" Kind="InputPin" />
+                  <Pin Id="TwI8iTQN64QL1Ajism8ru3" Name="Window" Kind="InputPin" />
                 </Node>
               </Patch>
               <ControlPoint Id="SwBy1YByywmLs2lgpKZa7p" Bounds="476,294" Alignment="Top" />
@@ -120,18 +97,14 @@
           </Patch>
           <Link Id="RcjHkfKGWYKPR1glyJQLZl" Ids="GVKDLIl9IrbM7g9rBgzp96,SIT3jjwhpgTOvnjr6uSDoy" />
           <Link Id="UtGTmKtGPbgPHWLEQ1l4zR" Ids="JiPYN2UzRooPEwlY407cQG,DVYrKsJjVpKQBcZP7bvjFc" />
-          <Link Id="A5X0MDBRVLaN8lmoNVEnhm" Ids="USUlqOnlJ8SMALaftrIJgb,RCqRxrdyPnBLyF7TFAvobj" />
-          <Link Id="NxKyfRFsG8SO7pdaaEMgOx" Ids="PUANxWaQewLLwPr6gFC2sE,OJbKkQ1ltvKLx1hHbhtMpa" />
-          <Link Id="EznB2J6x4KLL4lui0tQXCw" Ids="LYRbuUR7QaLOd0HtUEYCj8,TqqZHidV6E6LDtnJFYqWML" />
-          <Link Id="OLqUdWnk7vnODmab4IjSlX" Ids="OayyhgelHNVNKNHMdLiAtq,UMN3JTA7NbIPCsBFkpqTLG" IsFeedback="true" />
-          <Link Id="U2HzBfveBmxO3QtcLC4p1a" Ids="FLpemKM5uBaQANjQzXtmNS,UMN3JTA7NbIPCsBFkpqTLG" />
-          <Link Id="B6WSFthZHVsMTymetsD1Na" Ids="UMN3JTA7NbIPCsBFkpqTLG,ALUFsJ0Fw6LMAmwlGlwdPy" />
           <Link Id="HNzvqOCoySCNnHCGlTya9k" Ids="SwBy1YByywmLs2lgpKZa7p,HVIR1UcGMykLgL3pQV9Hf8" />
           <Link Id="BQFx8Gkg9iQNh2AGIoEELW" Ids="JuNWyeQZ5BwL9gLiymZvfo,SwBy1YByywmLs2lgpKZa7p" />
           <Link Id="KL7kpB5lTrIOGPiInbCmlv" Ids="U0fAHesvsy6PqPDek5qeYD,JuNWyeQZ5BwL9gLiymZvfo" IsHidden="true" />
           <Link Id="UIJtBtsmoxSPjdkbOXRQnC" Ids="T9ynGHGowmOLyAkwO9iH15,TwI8iTQN64QL1Ajism8ru3" />
           <Link Id="JWzGTfHVTFjMr1pmquKynT" Ids="DM7qTOGAiJtLRUeFXXpSUA,T9ynGHGowmOLyAkwO9iH15" />
           <Link Id="IOk0ngUcWHaQVkLGEm5qH2" Ids="AGF6YWtgkPAOw9octvCnMQ,DM7qTOGAiJtLRUeFXXpSUA" IsHidden="true" />
+          <Link Id="NxKyfRFsG8SO7pdaaEMgOx" Ids="PUANxWaQewLLwPr6gFC2sE,OJbKkQ1ltvKLx1hHbhtMpa" />
+          <Link Id="EUbtPAjw6q8N1iqNery3of" Ids="FLpemKM5uBaQANjQzXtmNS,ALUFsJ0Fw6LMAmwlGlwdPy" />
         </Patch>
       </Node>
       <!--
@@ -260,7 +233,7 @@
                   <Pin Id="NZsPrQw6LsBOY6H1K2v8Is" Name="Output" Kind="OutputPin" />
                   <Pin Id="IHlAM7M1lIHOwlZCgost4H" Name="Node Context" Kind="InputPin" IsHidden="true" />
                 </Node>
-                <Node Bounds="301,789,145,19" Id="O1uQb2t32eYM7sm7QzpNcv">
+                <Node Bounds="301,789,165,19" Id="O1uQb2t32eYM7sm7QzpNcv">
                   <p:NodeReference LastCategoryFullName="OpenEXR.ExrWriter" LastDependency="VL.OpenEXR.dll">
                     <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                     <Choice Kind="OperationCallFlag" Name="WriteTexture" />
@@ -273,6 +246,7 @@
                   <Pin Id="JKRByV6PGn9NHbJrLYTFtW" Name="Encoding" Kind="InputPin" />
                   <Pin Id="EyTk8Trx8GaM1nyLfNSJi6" Name="Output Channels" Kind="InputPin" />
                   <Pin Id="VGmkbQRBeYyMDAg4goGTLZ" Name="Storage" Kind="InputPin" />
+                  <Pin Id="LG1hcOH6ryiPjZQY0vWJK5" Name="Lineorder" Kind="InputPin" />
                 </Node>
                 <Node Bounds="242,707,44,26" Id="CI8xsSAJjDINLE7tBtGGSv">
                   <p:NodeReference LastCategoryFullName="Stride.API.Graphics.Texture" LastDependency="VL.Stride.Runtime.TypeForwards.vl">
@@ -416,6 +390,7 @@
             <ControlPoint Id="EFxk27ANoxTOkAijLWfFT8" Bounds="796,670" />
             <ControlPoint Id="P9X6DRMqDRKNeTs6iiF4Rv" Bounds="814,707" />
             <ControlPoint Id="S3jSZZY3T6MNUtDGG3zyfA" Bounds="871,750" />
+            <ControlPoint Id="SD5NI8aOmvcNQHUinhIPH5" Bounds="909,780" />
           </Canvas>
           <ProcessDefinition Id="QZ0ZLEDyKf8QUDyDlI5XGP">
             <Fragment Id="My73eRfzFc1L6vSPocoHwS" Patch="KxdEs81XwB4Pe5Q2NyHe1C" Enabled="true" />
@@ -470,6 +445,7 @@
             </Pin>
             <Pin Id="C1HNsSNX5AFP6sEtQIeYQk" Name="Filename" Kind="InputPin" Bounds="595,270" />
             <Pin Id="AFY1qfc0aO8OpMceie4sTE" Name="Storage" Kind="InputPin" />
+            <Pin Id="GiBDalMrqcMOZGrQej7pom" Name="Lineorder" Kind="InputPin" />
             <Pin Id="NIsEwoAAdkWLvpzI4wDgBB" Name="Compression" Kind="InputPin" />
             <Pin Id="CMzKSxPuBvGL4ostxr3Bil" Name="Output Channels" Kind="InputPin" DefaultValue="Rgba" />
             <Pin Id="Ak8mIagzbPPOKoDeUN5oGc" Name="Write" Kind="InputPin" Bounds="883,290" DefaultValue="False">
@@ -485,6 +461,8 @@
           <Link Id="Ok0F95c3TWHO667dYV3PcC" Ids="CMzKSxPuBvGL4ostxr3Bil,P9X6DRMqDRKNeTs6iiF4Rv" IsHidden="true" />
           <Link Id="BDrRmxLBby0QJWeG6G0tR5" Ids="S3jSZZY3T6MNUtDGG3zyfA,VGmkbQRBeYyMDAg4goGTLZ" />
           <Link Id="Mspj0Ww5jLYPBlTh5VTcHh" Ids="AFY1qfc0aO8OpMceie4sTE,S3jSZZY3T6MNUtDGG3zyfA" IsHidden="true" />
+          <Link Id="Nu0CrPvqpt7PAT0wsFXLRj" Ids="SD5NI8aOmvcNQHUinhIPH5,LG1hcOH6ryiPjZQY0vWJK5" />
+          <Link Id="EcjblXfiXNDP2lQ3F39PNZ" Ids="GiBDalMrqcMOZGrQej7pom,SD5NI8aOmvcNQHUinhIPH5" IsHidden="true" />
         </Patch>
       </Node>
     </Canvas>
@@ -511,8 +489,8 @@
   </Patch>
   <PlatformDependency Id="UuYjpCh8TmeQMHFzoqqmcD" Location="./lib/netstandard2.0/VL.OpenEXR.dll" />
   <PlatformDependency Id="Ni2bfrnGNIIPR2aLjHkTxD" Location="Stride.Graphics.dll" />
-  <NugetDependency Id="KV3o8SB8qfqPlrlChNuLf9" Location="VL.Stride" Version="2025.7.0-0328-g5bed1bf840" />
-  <NugetDependency Id="LGFGujr8QU6M2BKEGXaHQE" Location="VL.Stride.Runtime" Version="2025.7.0-0328-g5bed1bf840" />
-  <NugetDependency Id="V0Nk8XJSMMIMN5lYyQoxp7" Location="VL.CoreLib" Version="2025.7.0-0328-g5bed1bf840" />
-  <NugetDependency Id="EwEVo3SbsTbPl8FuHmyBC2" Location="VL.Stride.TextureFX" Version="2025.7.0-0328-g5bed1bf840" />
+  <NugetDependency Id="KV3o8SB8qfqPlrlChNuLf9" Location="VL.Stride" Version="2025.7.0-0351-gb3f6445d75" />
+  <NugetDependency Id="LGFGujr8QU6M2BKEGXaHQE" Location="VL.Stride.Runtime" Version="2025.7.0-0351-gb3f6445d75" />
+  <NugetDependency Id="V0Nk8XJSMMIMN5lYyQoxp7" Location="VL.CoreLib" Version="2025.7.0-0351-gb3f6445d75" />
+  <NugetDependency Id="EwEVo3SbsTbPl8FuHmyBC2" Location="VL.Stride.TextureFX" Version="2025.7.0-0351-gb3f6445d75" />
 </Document>

@@ -45,6 +45,12 @@ namespace OpenEXR
         Tiled
     }
 
+    public enum ExrLineorder
+    {
+        Sequential = 0,
+        Random = 2
+    }
+
     public static class ExrLoader
     {
         #pragma warning disable CA5393
@@ -55,6 +61,9 @@ namespace OpenEXR
 
         public static Texture LoadFromPath(string path, GraphicsDevice device, int partIndex = 0, Optional<RectangleF> window = default)
         {
+            if (string.IsNullOrEmpty(path))
+                return null;
+
             if (Path.GetExtension(path) == ".hdr")
                 return LoadHDR(path, device);
             else
@@ -157,12 +166,12 @@ namespace OpenEXR
         [DllImport("VL.OpenEXR.Native.dll")]
         static extern int write_texture(string path, int width, int height, ExrPixelFormat format, ExrEncoding encoding, ExrOutputChannels outputChannels, IntPtr data);
 
-        public static void WriteTexture(byte[] data, string path, int width, int height, PixelFormat format, ExrEncoding encoding, ExrOutputChannels outputChannels, ExrStorage storage)
+        public static void WriteTexture(byte[] data, string path, int width, int height, PixelFormat format, ExrEncoding encoding, ExrOutputChannels outputChannels, ExrStorage storage, ExrLineorder lineorder)
         {
-            WriteTexture((ReadOnlySpan<byte>)data, path, width, height, format, encoding, outputChannels, storage);
+            WriteTexture((ReadOnlySpan<byte>)data, path, width, height, format, encoding, outputChannels, storage, lineorder);
         }
 
-        public static void WriteTexture(ReadOnlySpan<byte> data, string path, int width, int height, PixelFormat format, ExrEncoding encoding, ExrOutputChannels outputChannels, ExrStorage storage)
+        public static void WriteTexture(ReadOnlySpan<byte> data, string path, int width, int height, PixelFormat format, ExrEncoding encoding, ExrOutputChannels outputChannels, ExrStorage storage, ExrLineorder lineorder)
         {
             switch (format)
             {
@@ -186,7 +195,7 @@ namespace OpenEXR
                 using var context = ExrContext.OpenWrite(path, Interop.exr_default_write_mode_t.EXR_WRITE_FILE_DIRECTLY);
                 var part = context.AddPart(Path.GetFileNameWithoutExtension(path), (Interop.exr_storage_t)storage);
 
-                ReadOnlySpan<ExrChannel> channels = outputChannels switch
+                ExrChannel[] channels = outputChannels switch
                 {
                     ExrOutputChannels.Rgba =>
                     [
@@ -205,8 +214,8 @@ namespace OpenEXR
                     _ => throw new NotImplementedException()
                 };
 
-                var halfData = MemoryMarshal.Cast<byte, T>(data).AsSpan2D(height, width * channels.Length);
-                part.Encode(halfData, channels, (Interop.exr_compression_t)encoding, (Interop.exr_storage_t)storage);
+                var typedData = MemoryMarshal.Cast<byte, T>(data).AsSpan2D(height, width * channels.Length);
+                part.Encode(typedData, channels, (Interop.exr_compression_t)encoding, (Interop.exr_storage_t)storage, (Interop.exr_lineorder_t)lineorder);
             }
         }
     }

@@ -4,12 +4,14 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.HighPerformance;
 using CommunityToolkit.HighPerformance.Buffers;
+using CommunityToolkit.HighPerformance.Helpers;
 using OpenEXR;
 using OpenEXR.Interop;
 using Stride.Core.Mathematics;
@@ -388,7 +390,7 @@ public unsafe class ExrPart(ExrContext context, int partIndex)
             });
     }
 
-    internal void Encode<T>(ReadOnlySpan2D<T> data, ReadOnlySpan<ExrChannel> channels, exr_compression_t compression, exr_storage_t storage)
+    internal void Encode<T>(ReadOnlySpan2D<T> data, ExrChannel[] channels, exr_compression_t compression, exr_storage_t storage, exr_lineorder_t lineorder)
          where T : unmanaged, IElement<T>
     {
         foreach (var channel in channels)
@@ -399,31 +401,35 @@ public unsafe class ExrPart(ExrContext context, int partIndex)
             using var marshalledName = new MarshaledString(channel.Name);
             exr_add_channel(Handle, PartIndex, marshalledName.Value, T.PixelType, exr_perceptual_treatment_t.EXR_PERCEPTUALLY_LINEAR, 1, 1).ThrowIfError();
         }
-        exr_set_compression(Handle, PartIndex, compression).ThrowIfError();
 
         var dataWindow = new Rectangle(0, 0, data.Width / channels.Length, data.Height);
         var dataWindowBox = exr_attr_box2i_t.FromRectangle(dataWindow);
-        exr_set_data_window(Handle, PartIndex, &dataWindowBox).ThrowIfError();
-
         var displayWindow = new Rectangle(0, 0, data.Width / channels.Length, data.Height);
         var displayWindowBox = exr_attr_box2i_t.FromRectangle(displayWindow);
-        exr_set_display_window(Handle, PartIndex, &displayWindowBox).ThrowIfError();
-
-        exr_set_lineorder(Handle, PartIndex, exr_lineorder_t.EXR_LINEORDER_INCREASING_Y).ThrowIfError();
-        exr_set_pixel_aspect_ratio(Handle, PartIndex, 1.0f).ThrowIfError();
         var screenWindowCenter = new exr_attr_v2f_t() { x = 0.0f, y = 0.0f };
-        exr_set_screen_window_center(Handle, PartIndex, &screenWindowCenter).ThrowIfError();
-        exr_set_screen_window_width(Handle, PartIndex, 1.0f).ThrowIfError();
 
-        if (storage == exr_storage_t.EXR_STORAGE_SCANLINE)
-            EncodeScanlines(data, channels, compression);
-        else if (storage == exr_storage_t.EXR_STORAGE_TILED)
-            EncodeTiles(data, channels, compression);
-        else
-            throw new NotImplementedException($"Storage type {storage} is not supported.");
+        exr_initialize_required_attr(Handle, PartIndex,
+            displayWindow: &displayWindowBox,
+            dataWindow: &dataWindowBox,
+            pixelaspectratio: 1.0f,
+            screenWindowCenter: &screenWindowCenter,
+            screenWindowWidth: 1f,
+            lineorder: lineorder,
+            ctype: compression).ThrowIfError();
+
+        var randomAccess = lineorder == exr_lineorder_t.EXR_LINEORDER_RANDOM_Y;
+        fixed (T* dataPtr = data)
+        {
+            if (storage == exr_storage_t.EXR_STORAGE_SCANLINE)
+                EncodeScanlines(data, dataPtr, channels, randomAccess);
+            else if (storage == exr_storage_t.EXR_STORAGE_TILED)
+                EncodeTiles(data, dataPtr, channels, randomAccess);
+            else
+                throw new NotImplementedException($"Storage type {storage} is not supported.");
+        }
     }
 
-    private void EncodeScanlines<T>(ReadOnlySpan2D<T> data, ReadOnlySpan<ExrChannel> channels, exr_compression_t compression)
+    private void EncodeScanlines<T>(ReadOnlySpan2D<T> data, T* dataPtr, ExrChannel[] channels, bool randomAccess)
         where T : unmanaged, IElement<T>
     {
         var scanlines = GetScanlinesPerChunk();
@@ -433,78 +439,162 @@ public unsafe class ExrPart(ExrContext context, int partIndex)
         // TODO: What if we want to write multiple parts?
         exr_write_header(Handle).ThrowIfError();
 
-        for (int y = 0; y < data.Height; y += scanlines)
-        {
-            exr_chunk_info_t ci;
-            exr_write_scanline_chunk_info(Handle, PartIndex, y, &ci).ThrowIfError();
+        // Workaround to be able to reconstruct the span
+        var (dataWidth, dataHeight) = (data.Width, data.Height);
 
-            exr_encode_pipeline_t encoder;
-            exr_encoding_initialize(Handle, PartIndex, &ci, &encoder).ThrowIfError();
-
-            for (int i = 0; i < channels.Length; i++)
+        Parallel.ForEach(
+            source: Partitioner.Create(0, data.Height, scanlines),
+            parallelOptions: new ParallelOptions() { MaxDegreeOfParallelism = randomAccess ? -1 : 1 },
+            localInit: () =>
             {
-                var c = channels[i];
-                if (c.Index < 0)
-                    continue;
+                var encoder = (exr_encode_pipeline_t*)Marshal.AllocHGlobal(sizeof(exr_encode_pipeline_t));
+                encoder->channels = null;
+                return new nint(encoder);
+            },
+            body: (t, _, e) =>
+            {
+                var encoder = (exr_encode_pipeline_t*)e;
+                var (y0, y1) = t;
+                var data = new ReadOnlySpan2D<T>(dataPtr, dataHeight, dataWidth, 0);
 
-                ref var channel = ref encoder.channels[c.Index];
-                channel.user_bytes_per_element = (short)sizeof(T);
-                channel.user_data_type = (ushort)T.PixelType;
-                channel.user_pixel_stride = channels.Length * sizeof(T);
-                channel.user_line_stride = data.Width * sizeof(T);
-                channel.encode_from_ptr = (byte*)Unsafe.AsPointer(ref Unsafe.AsRef(in data[y, i]));
-            }
+                exr_chunk_info_t ci;
+                exr_write_scanline_chunk_info(Handle, PartIndex, y0, &ci).ThrowIfError();
 
-            exr_encoding_choose_default_routines(Handle, PartIndex, &encoder).ThrowIfError();
-            exr_encoding_run(Handle, PartIndex, &encoder);
-            exr_encoding_destroy(Handle, &encoder);
-        }
+                if (encoder->channels is null)
+                {
+                    exr_encoding_initialize(Handle, PartIndex, &ci, encoder).ThrowIfError();
+
+                    for (int i = 0; i < channels.Length; i++)
+                    {
+                        var c = channels[i];
+                        if (c.Index < 0)
+                            continue;
+
+                        ref var channel = ref encoder->channels[c.Index];
+                        channel.user_bytes_per_element = (short)sizeof(T);
+                        channel.user_data_type = (ushort)T.PixelType;
+                        channel.user_pixel_stride = channels.Length * sizeof(T);
+                        channel.user_line_stride = data.Width * sizeof(T);
+                        channel.encode_from_ptr = (byte*)Unsafe.AsPointer(ref Unsafe.AsRef(in data[y0, i]));
+                    }
+
+                    exr_encoding_choose_default_routines(Handle, PartIndex, encoder).ThrowIfError();
+                }
+                else
+                {
+                    exr_encoding_update(Handle, PartIndex, &ci, encoder).ThrowIfError();
+                }
+
+                for (int i = 0; i < channels.Length; i++)
+                {
+                    var c = channels[i];
+                    if (c.Index >= 0)
+                    {
+                        ref var channel = ref encoder->channels[c.Index];
+                        channel.encode_from_ptr = (byte*)Unsafe.AsPointer(ref Unsafe.AsRef(in data[y0, i]));
+                    }
+                }
+
+                exr_encoding_run(Handle, PartIndex, encoder).ThrowIfError();
+
+                return e;
+            },
+            localFinally: e =>
+            {
+                var encoder = (exr_encode_pipeline_t*)e;
+                if (encoder->channels != null)
+                    exr_encoding_destroy(Handle, encoder).ThrowIfError();
+                Marshal.FreeHGlobal(e);
+            });
     }
 
-    private void EncodeTiles<T>(ReadOnlySpan2D<T> data, ReadOnlySpan<ExrChannel> channels, exr_compression_t compression)
+    private void EncodeTiles<T>(ReadOnlySpan2D<T> data, T* dataPtr, ExrChannel[] channels, bool randomAccess)
         where T : unmanaged, IElement<T>
     {
         var width = data.Width / channels.Length;
         var tileSize = new Size2(64, 64);
         var tileCount = new Int2((int)Math.Ceiling((float)width / tileSize.Width), (int)Math.Ceiling((float)data.Height / tileSize.Height));
         var level = default(Int2);
+
         exr_set_tile_descriptor(Handle, PartIndex, (uint)tileSize.Width, (uint)tileSize.Height, exr_tile_level_mode_t.EXR_TILE_ONE_LEVEL, exr_tile_round_mode_t.EXR_TILE_ROUND_DOWN);
-        //var chunkCount = (int)Math.Ceiling((float)data.Height / scanlines);
-        //exr_set_chunk_count(Handle, PartIndex, chunkCount).ThrowIfError();
 
         // TODO: What if we want to write multiple parts?
         exr_write_header(Handle).ThrowIfError();
 
-        for (int tileY = 0; tileY < tileCount.Y; tileY++)
-        {
-            for (int tileX = 0; tileX < tileCount.X; tileX++)
+        // Workaround to be able to reconstruct the span
+        var (dataWidth, dataHeight) = (data.Width, data.Height);
+        
+        Parallel.ForEach(
+            source: GetTiles(tileCount),
+            parallelOptions: new ParallelOptions() { MaxDegreeOfParallelism = randomAccess ? -1 : 1 },
+            localInit: () =>
             {
+                var encoder = (exr_encode_pipeline_t*)Marshal.AllocHGlobal(sizeof(exr_encode_pipeline_t));
+                encoder->channels = null;
+                return new nint(encoder);
+            },
+            body: (tile, _, e) =>
+            {
+                var encoder = (exr_encode_pipeline_t*)e;
+                var x = tile.X * tileSize.Width * channels.Length;
+                var y = tile.Y * tileSize.Height;
+                var data = new ReadOnlySpan2D<T>(dataPtr, dataHeight, dataWidth, 0);
+
                 exr_chunk_info_t ci;
-                exr_write_tile_chunk_info(Handle, PartIndex, tileX, tileY, level.X, level.Y, &ci).ThrowIfError();
+                exr_write_tile_chunk_info(Handle, PartIndex, tile.X, tile.Y, level.X, level.Y, &ci).ThrowIfError();
 
-                exr_encode_pipeline_t encoder;
-                exr_encoding_initialize(Handle, PartIndex, &ci, &encoder).ThrowIfError();
+                if (encoder->channels is null)
+                {
+                    exr_encoding_initialize(Handle, PartIndex, &ci, encoder).ThrowIfError();
 
-                var x = tileX * tileSize.Width * channels.Length;
-                var y = tileY * tileSize.Height;
+                    for (int i = 0; i < channels.Length; i++)
+                    {
+                        var c = channels[i];
+                        if (c.Index < 0)
+                            continue;
+
+                        ref var channel = ref encoder->channels[c.Index];
+                        channel.user_bytes_per_element = (short)sizeof(T);
+                        channel.user_data_type = (ushort)T.PixelType;
+                        channel.user_pixel_stride = channels.Length * sizeof(T);
+                        channel.user_line_stride = data.Width * sizeof(T);
+                    }
+
+                    exr_encoding_choose_default_routines(Handle, PartIndex, encoder).ThrowIfError();
+                }
+                else
+                {
+                    exr_encoding_update(Handle, PartIndex, &ci, encoder).ThrowIfError();
+                }
+
                 for (int i = 0; i < channels.Length; i++)
                 {
                     var c = channels[i];
-                    if (c.Index < 0)
-                        continue;
-
-                    ref var channel = ref encoder.channels[c.Index];
-                    channel.user_bytes_per_element = (short)sizeof(T);
-                    channel.user_data_type = (ushort)T.PixelType;
-                    channel.user_pixel_stride = channels.Length * sizeof(T);
-                    channel.user_line_stride = data.Width * sizeof(T);
-                    channel.encode_from_ptr = (byte*)Unsafe.AsPointer(ref Unsafe.AsRef(in data[y, x + i]));
+                    if (c.Index >= 0)
+                    {
+                        ref var channel = ref encoder->channels[c.Index];
+                        channel.encode_from_ptr = (byte*)Unsafe.AsPointer(ref Unsafe.AsRef(in data[y, x + i]));
+                    }
                 }
 
-                exr_encoding_choose_default_routines(Handle, PartIndex, &encoder).ThrowIfError();
-                exr_encoding_run(Handle, PartIndex, &encoder);
-                exr_encoding_destroy(Handle, &encoder);
+                exr_encoding_run(Handle, PartIndex, encoder);
+
+                return e;
+            },
+            localFinally: e =>
+            {
+                var encoder = (exr_encode_pipeline_t*)e;
+                if (encoder->channels != null)
+                    exr_encoding_destroy(Handle, encoder).ThrowIfError();
+                Marshal.FreeHGlobal(e);
             }
+        );
+
+        static IEnumerable<Int2> GetTiles(Int2 tileCount)
+        {
+            for (int tileY = 0; tileY < tileCount.Y; tileY++)
+                for (int tileX = 0; tileX < tileCount.X; tileX++)
+                    yield return new Int2(tileX, tileY);
         }
     }
 

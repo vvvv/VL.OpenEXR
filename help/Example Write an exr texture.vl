@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" xmlns:r="reflection" Id="RcfIxtgsg39OYD4cKvD26T" LanguageVersion="2024.6.6" Version="0.128">
+<Document xmlns:p="property" xmlns:r="reflection" Id="RcfIxtgsg39OYD4cKvD26T" LanguageVersion="2025.7.0-0351-gb3f6445d75" Version="0.128">
   <Patch Id="QcyBSDz9jgYPBJjrZl6tIT">
     <Canvas Id="Rh5YsOfHFh6OF2E4UspMnI" DefaultCategory="Main" BordersChecked="false" CanvasType="FullCategory" />
     <!--
@@ -21,6 +21,8 @@
             </p:NodeReference>
             <Pin Id="UFGjZuAmflENCfRr7wS9m2" Name="Node Context" Kind="InputPin" IsHidden="true" />
             <Pin Id="ML8YvE0AjJSPFyKwUExW7y" Name="Path" Kind="InputPin" DefaultValue="..\resources\IndoorHDRI001_2K-HDR.exr" />
+            <Pin Id="VvKXmX6BDKeLG7KqPmTkgM" Name="Part Index" Kind="InputPin" />
+            <Pin Id="NmVrCWMUbWiLXM68N4Yxn9" Name="Window" Kind="InputPin" />
             <Pin Id="SWgMEBbp3dePvfqwHMvdLp" Name="Reload" Kind="InputPin" DefaultValue="False" />
             <Pin Id="AdhWUJ9jsMZNLHfnLJhtxp" Name="Texture" Kind="OutputPin" />
           </Node>
@@ -30,17 +32,7 @@
             </p:TypeAnnotation>
           </Pad>
           <Pad Id="QPjSFjOgiUtN8XBR5gF6U7" Comment="Texture" Bounds="252,236,190,132" ShowValueBox="true" isIOBox="true" />
-          <Node Bounds="988,1195,67,19" Id="HaboswqnLTeO2OWHB9JYdO">
-            <p:NodeReference LastCategoryFullName="OpenEXR" LastDependency="VL.OpenEXR.vl">
-              <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-              <Choice Kind="ProcessAppFlag" Name="FileTexture" />
-            </p:NodeReference>
-            <Pin Id="RAKhSDu4FSSOlQhaZ2Ybqz" Name="Node Context" Kind="InputPin" IsHidden="true" />
-            <Pin Id="EzFLvelmvDuLEDCOHMYKf9" Name="Path" Kind="InputPin" DefaultValue="..\resources\Out_OutdoorHDRI016_2K-HDR.exr" />
-            <Pin Id="QXLCmzRyXusMiaoh91L6e1" Name="Reload" Kind="InputPin" />
-            <Pin Id="DWUt4jKnZzBLHH2KKHVil4" Name="Texture" Kind="OutputPin" />
-          </Node>
-          <Node Bounds="250,520,105,19" Id="E3c764duVfPL3uks4hKCc5">
+          <Node Bounds="250,540,125,19" Id="E3c764duVfPL3uks4hKCc5">
             <p:NodeReference LastCategoryFullName="OpenEXR" LastDependency="VL.OpenEXR.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <CategoryReference Kind="Category" Name="OpenEXR" NeedsToBeDirectParent="true" />
@@ -50,21 +42,23 @@
             <Pin Id="Sm1cwBQaoChLaqlSIv7opF" Name="Node Context" Kind="InputPin" IsHidden="true" />
             <Pin Id="NYhuKOLhEPoP1GrifWOCEV" Name="Input" Kind="InputPin" />
             <Pin Id="VcODYgZiKElLelnNOUIae2" Name="Filename" Kind="InputPin" />
+            <Pin Id="H2RuyMmnPs3Nw3JY4wCR5t" Name="Storage" Kind="InputPin" />
+            <Pin Id="HMZ4JblPCzmPoBT0Z0AcNo" Name="Lineorder" Kind="InputPin" />
             <Pin Id="BHx2p6H4fx6QJEr4gczV83" Name="Compression" Kind="InputPin" />
             <Pin Id="BB76mEHoHIQPkrwZzu1Lrk" Name="Output Channels" Kind="InputPin" />
             <Pin Id="HHTLaeSr9yrL47bpQoO8ID" Name="Write" Kind="InputPin" />
           </Node>
-          <Pad Id="JqOp7PzPifpOlpV3KT0K6Q" Comment="Compression" Bounds="302,432,104,15" ShowValueBox="true" isIOBox="true" Value="FastLossless">
+          <Pad Id="JqOp7PzPifpOlpV3KT0K6Q" Comment="Compression" Bounds="332,450,104,15" ShowValueBox="true" isIOBox="true" Value="FastLossless">
             <p:TypeAnnotation LastCategoryFullName="OpenEXR" LastDependency="VL.OpenEXR.vl">
               <Choice Kind="TypeFlag" Name="ExrEncoding" />
             </p:TypeAnnotation>
           </Pad>
-          <Pad Id="IeyU8uz8xMRLHQ10vCNIMn" Comment="Filename" Bounds="277,402,140,15" ShowValueBox="true" isIOBox="true" Value="c:\temp\foo_rgba.exr">
+          <Pad Id="IeyU8uz8xMRLHQ10vCNIMn" Comment="Filename" Bounds="272,391,140,15" ShowValueBox="true" isIOBox="true" Value="c:\temp\foo_rgba.exr">
             <p:TypeAnnotation LastCategoryFullName="IO" LastDependency="VL.CoreLib.vl">
               <Choice Kind="TypeFlag" Name="Path" />
             </p:TypeAnnotation>
           </Pad>
-          <Pad Id="G9OlV0FildwL4P9NYZwgNF" Comment="Write" Bounds="352,490,35,35" ShowValueBox="true" isIOBox="true" Value="false">
+          <Pad Id="G9OlV0FildwL4P9NYZwgNF" Comment="Write" Bounds="372,491,35,35" ShowValueBox="true" isIOBox="true" Value="false">
             <p:TypeAnnotation LastCategoryFullName="Primitive" LastDependency="VL.CoreLib.vl">
               <Choice Kind="ImmutableTypeFlag" Name="Boolean" />
             </p:TypeAnnotation>
@@ -72,7 +66,7 @@
               <p:buttonmode p:Assembly="VL.UI.Forms" p:Type="VL.HDE.PatchEditor.Editors.ButtonModeEnum">Bang</p:buttonmode>
             </p:ValueBoxSettings>
           </Pad>
-          <Pad Id="PWpVUUdOSr7Mf5FyhObH6a" Bounds="507,451,202,19" ShowValueBox="true" isIOBox="true" Value="https://openexr.com/en/latest/TechnicalIntroduction.html#data-compression">
+          <Pad Id="PWpVUUdOSr7Mf5FyhObH6a" Bounds="520,463,202,19" ShowValueBox="true" isIOBox="true" Value="https://openexr.com/en/latest/TechnicalIntroduction.html#data-compression">
             <p:TypeAnnotation LastCategoryFullName="Primitive" LastDependency="VL.CoreLib.vl">
               <Choice Kind="TypeFlag" Name="String" />
             </p:TypeAnnotation>
@@ -81,7 +75,7 @@
               <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Link</p:stringtype>
             </p:ValueBoxSettings>
           </Pad>
-          <Pad Id="I85VsVlMMFTLJ9NfuI9HuZ" Bounds="507,427,191,19" ShowValueBox="true" isIOBox="true" Value="Compression options in detail:">
+          <Pad Id="I85VsVlMMFTLJ9NfuI9HuZ" Bounds="520,439,191,19" ShowValueBox="true" isIOBox="true" Value="Compression options in detail:">
             <p:TypeAnnotation LastCategoryFullName="Primitive" LastDependency="VL.CoreLib.vl">
               <Choice Kind="TypeFlag" Name="String" />
             </p:TypeAnnotation>
@@ -90,9 +84,19 @@
               <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Comment</p:stringtype>
             </p:ValueBoxSettings>
           </Pad>
-          <Pad Id="VJvGV4jd8DSPwMbZBARhLg" Comment="Output Channels" Bounds="327,461,46,15" ShowValueBox="true" isIOBox="true" Value="Rgba">
+          <Pad Id="VJvGV4jd8DSPwMbZBARhLg" Comment="Output Channels" Bounds="352,470,46,15" ShowValueBox="true" isIOBox="true" Value="Rgba">
             <p:TypeAnnotation LastCategoryFullName="OpenEXR" LastDependency="VL.OpenEXR.vl">
               <Choice Kind="TypeFlag" Name="ExrOutputChannels" />
+            </p:TypeAnnotation>
+          </Pad>
+          <Pad Id="Oqea6k8yoB7PWZcvNkIfUE" Comment="Lineorder" Bounds="312,430,70,15" ShowValueBox="true" isIOBox="true" Value="Sequential">
+            <p:TypeAnnotation LastCategoryFullName="OpenEXR" LastDependency="VL.OpenEXR.vl">
+              <Choice Kind="TypeFlag" Name="ExrLineorder" />
+            </p:TypeAnnotation>
+          </Pad>
+          <Pad Id="Ua6KFOfBvEsLhJyaiHEVBO" Comment="Storage" Bounds="292,410,61,15" ShowValueBox="true" isIOBox="true" Value="Scanline">
+            <p:TypeAnnotation LastCategoryFullName="OpenEXR" LastDependency="VL.OpenEXR.vl">
+              <Choice Kind="TypeFlag" Name="ExrStorage" />
             </p:TypeAnnotation>
           </Pad>
         </Canvas>
@@ -109,11 +113,13 @@
         <Link Id="PndPtEkbACqNZn9pKy6DqA" Ids="IeyU8uz8xMRLHQ10vCNIMn,VcODYgZiKElLelnNOUIae2" />
         <Link Id="KLAPe0pLNaOMq3I2V77gbL" Ids="G9OlV0FildwL4P9NYZwgNF,HHTLaeSr9yrL47bpQoO8ID" />
         <Link Id="J9WXIcaoSv6OTBHOJ4TT0l" Ids="VJvGV4jd8DSPwMbZBARhLg,BB76mEHoHIQPkrwZzu1Lrk" />
+        <Link Id="Ie6DUNTUypdNKIglSbLOko" Ids="Oqea6k8yoB7PWZcvNkIfUE,HMZ4JblPCzmPoBT0Z0AcNo" />
+        <Link Id="MUV4XYPpxZSL932Ci1OXCQ" Ids="Ua6KFOfBvEsLhJyaiHEVBO,H2RuyMmnPs3Nw3JY4wCR5t" />
       </Patch>
     </Node>
   </Patch>
-  <NugetDependency Id="TugQA41hz6gMTQv2Ue3Tha" Location="VL.CoreLib" Version="2024.6.6" />
-  <NugetDependency Id="EARv94p4Aj5N8NlvBot5uY" Location="VL.Stride" Version="2024.6.6" />
-  <NugetDependency Id="DrlANwRD6NILKp7OcAxxLc" Location="VL.Stride.Runtime" Version="2024.6.6" />
+  <NugetDependency Id="TugQA41hz6gMTQv2Ue3Tha" Location="VL.CoreLib" Version="2025.7.0-0351-gb3f6445d75" />
+  <NugetDependency Id="EARv94p4Aj5N8NlvBot5uY" Location="VL.Stride" Version="2025.7.0-0351-gb3f6445d75" />
+  <NugetDependency Id="DrlANwRD6NILKp7OcAxxLc" Location="VL.Stride.Runtime" Version="2025.7.0-0351-gb3f6445d75" />
   <NugetDependency Id="KMXmJZg8KYOP6LAcZbDgcC" Location="VL.OpenEXR" Version="0.0.0" />
 </Document>
