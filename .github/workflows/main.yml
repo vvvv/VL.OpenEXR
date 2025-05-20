@@ -15,8 +15,13 @@ jobs:
     - name: Git Checkout
       uses: actions/checkout@master
     
-    - name: Setup MSBuild.exe
-      uses: microsoft/setup-msbuild@v1.0.2
+    - name: Setup .NET 8.x
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.x
+
+    - run: dotnet build --configuration Release
+      working-directory: src
 
     - name: Setup Nuget.exe
       uses: nuget/setup-nuget@v1

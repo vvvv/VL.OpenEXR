@@ -1,13 +1,8 @@
 # VL.OpenEXR
 
-[OpenEXR](https://www.openexr.com/) (.exr) and Radiance HDR (.hdr) image loader and .exr file writer. Supported .exr compression formats:
-- Uncompressed
-- RLE
-- ZIP1
-- ZIP16
-- PIZ
+[OpenEXR](https://www.openexr.com/) (.exr) and Radiance HDR (.hdr) image loader and .exr file writer.
 
-Based on this [rust exr library](https://docs.rs/exr/latest/exr/).
+Uses [OpenEXRCoreAPI](https://openexr.com/en/latest/OpenEXRCoreAPI.html) for reading and writing of .exr files and [radiant](https://docs.rs/radiant/latest/radiant/) for reading .hdr files.
 
 For use with vvvv, the visual live-programming environment for .NET: http://vvvv.org
 
@@ -25,6 +20,10 @@ For use with vvvv, the visual live-programming environment for .NET: http://vvvv
 - Report issues on [the vvvv forum](https://forum.vvvv.org/c/vvvv-gamma/28)
 - For custom development requests, please [get in touch](mailto:devvvvs@vvvv.org)
 - When making a pull-request, please make sure to read the general [guidelines on contributing to vvvv libraries](https://thegraybook.vvvv.org/reference/extending/contributing.html)
+
+## Development
+- The OpenEXRCore interop code is generated with [ClangSharpPInvokeGenerator](https://github.com/dotnet/clangsharp/?tab=readme-ov-file#generating-bindings) (`dotnet ClangSharpPInvokeGenerator @generate.rsp`)
+- The OpenEXRCore binaries are from [vcpk](https://openexr.com/en/latest/install.html#windows), current version is 3.3.2 (`vcpkg install openexr`)
 
 ## Credits
 Initial development by [@torinos-yt](https://github.com/torinos-yt).
