@@ -26,4 +26,8 @@ For use with vvvv, the visual live-programming environment for .NET: http://vvvv
 - The OpenEXRCore binaries are from [vcpk](https://openexr.com/en/latest/install.html#windows), current version is 3.3.2 (`vcpkg install openexr`)
 
 ## Credits
-Initial development by [@torinos-yt](https://github.com/torinos-yt).
+Development of this library was partially sponsored by:  
+* [Refik Anadol Studio](https://refikanadolstudio.com/)
+
+Initial development by:
+* [@torinos-yt](https://github.com/torinos-yt)

@@ -14,22 +14,20 @@ jobs:
     steps:
     - name: Git Checkout
       uses: actions/checkout@master
-    
-    - name: Setup .NET 8.x
-      uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 8.x
-
-    - run: dotnet build --configuration Release
-      working-directory: src
+        lfs: 'true'
+    
+    - name: Setup MSBuild.exe
+      uses: microsoft/setup-msbuild@v2
 
     - name: Setup Nuget.exe
-      uses: nuget/setup-nuget@v1
+      uses: nuget/setup-nuget@v2.0.0
 
     - name: Publish VL Nuget
-      uses: vvvv/PublishVLNuget@1.0.40
+      uses: vvvv/PublishVLNuget@1.0.43
       with:
+        csproj: src\VL.OpenEXR.csproj
         nuspec: deployment\VL.OpenEXR.nuspec
         icon-src: https://raw.githubusercontent.com/vvvv/PublicContent/master/nugeticon.png
         icon-dst: ./deployment/nugeticon.png
-        nuget-key: ${{ secrets.NUGET_KEY }}
+        nuget-key: ${{ secrets.VVVV_ORG_NUGET_KEY }}
