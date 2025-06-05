@@ -97,9 +97,8 @@ namespace OpenEXR
 
             Texture Decode<T>() where T : unmanaged, IElement<T>
             {
-                var dataWindow = part.GetDataWindow();
-                if (window.HasValue)
-                    dataWindow = Rectangle.Intersect(dataWindow, (Rectangle)window.Value);
+                var displayWindow = window.HasValue ? (Rectangle)window.Value : part.GetDisplayWindow();
+                var dataWindow = Rectangle.Intersect(part.GetDataWindow(), displayWindow);
                 if (dataWindow.IsEmpty)
                     return null;
 
